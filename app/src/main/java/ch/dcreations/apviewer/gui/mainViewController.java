@@ -1,5 +1,6 @@
 package ch.dcreations.apviewer.gui;
 
+import ch.dcreations.apviewer.Step3DModel.Step3DModel;
 import ch.dcreations.apviewer.config.LogConfiguration;
 import ch.dcreations.apviewer.fileHandler.FileHandler;
 import javafx.fxml.FXML;
@@ -16,6 +17,7 @@ public class mainViewController {
 
     ViewModel viewModel;
     FileHandler fileHandler;
+    Step3DModel step3DModel;
     Stage stage;
     @FXML
     void initialize(){
@@ -26,11 +28,12 @@ public class mainViewController {
     }
     @FXML
     private void selectAFile() throws IOException {
+        step3DModel = new Step3DModel();
         if (stage == null) {
             logger.log(Level.WARNING,"stage null");
         }else {
             try {
-                fileHandler = new FileHandler(stage);
+                fileHandler = new FileHandler(stage,step3DModel);
             } catch (IOException e) {
                 throw new IOException("file not found");
             }
