@@ -9,11 +9,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FileHandler {
 
     private static File file;
-
     private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
     private static final DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
     private final Step3DModel step3DModel;

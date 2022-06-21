@@ -4,6 +4,8 @@ import ch.dcreations.apviewer.Step3DModel.Step3DModel;
 import ch.dcreations.apviewer.config.LogConfiguration;
 import ch.dcreations.apviewer.fileHandler.FileHandler;
 import javafx.fxml.FXML;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -19,9 +21,20 @@ public class mainViewController {
     FileHandler fileHandler;
     Step3DModel step3DModel;
     Stage stage;
+
+    @FXML
+    private AnchorPane DrawingPane;
+
     @FXML
     void initialize(){
         viewModel = new ViewModel();
+        viewModel.addPropertyChangeListener(evt -> {
+            for (Step3DModel step3DModel1 : viewModel.step3DModels) {
+                for (Shape shape : step3DModel1.getShapes2D()) {
+                    DrawingPane.getChildren().add(shape);
+                }
+            }
+        });
     }
     public void setStage(Stage stage) {
         this.stage = stage;
@@ -38,9 +51,8 @@ public class mainViewController {
                 throw new IOException("file not found");
             }
             fileHandler.getAFile();
-
-
         }
+        viewModel.addStepModel(step3DModel);
     }
 
 
