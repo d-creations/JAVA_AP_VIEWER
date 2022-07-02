@@ -7,9 +7,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class AP242Decoder {
-    Map<Integer,String> dataMap;
+    Map<Integer, String> dataMap;
     Map<AP242Code, StepShapes> decodedMap;
     List<StepShapes> ModeliShapes = new ArrayList<>();
+
     public AP242Decoder(Map<Integer, String> dataMap) {
         this.dataMap = dataMap;
     }
@@ -38,14 +39,14 @@ public class AP242Decoder {
         System.out.println("END");
     }
 
-    private String[] decodeKey(String value){
+    private String[] decodeKey(String value) {
         String[] code = new String[2];
-        if (value.startsWith("(GEOMETRIC_REPRESENTATION_CONTEXT")){
+        if (value.startsWith("(GEOMETRIC_REPRESENTATION_CONTEXT")) {
             code[0] = value;
             code[1] = "";
-        }else {
-            String topCode = value.substring(0,value.indexOf("("));
-            String contend = value.substring(value.indexOf("(")+1,value.length()-1);
+        } else {
+            String topCode = value.substring(0, value.indexOf("("));
+            String contend = value.substring(value.indexOf("(") + 1, value.length() - 1);
             code[0] = topCode;
             code[1] = contend;
         }
@@ -58,111 +59,208 @@ public class AP242Decoder {
         String contend = resived[1];
         String[] ret = contend.split(",");
         String[] numbers = contend.split(",");
-        switch (topCode){
+        String name = numbers[0];
+        switch (topCode) {
             case "SHAPE_DEFINITION_REPRESENTATION" -> {
-                String code1 = dataMap.get(Integer.valueOf(numbers[0].replace("#","")));
-                String code2 = dataMap.get(Integer.valueOf(numbers[1].replace("#","")));
-                return new ShapeDefinitionRepesentation(calculateDecoding(code1),calculateDecoding(code2));}
-            case "ADVANCED_BREP_SHAPE_REPRESENTATION" ->{
-                String name = numbers[0];
-                String code1 = dataMap.get(Integer.valueOf(numbers[numbers.length-1].replace("#","")));
+                String code1 = dataMap.get(Integer.valueOf(numbers[0].replace("#", "")));
+                String code2 = dataMap.get(Integer.valueOf(numbers[1].replace("#", "")));
+                return new ShapeDefinitionRepesentation(calculateDecoding(code1), calculateDecoding(code2));
+            }
+            case "ADVANCED_BREP_SHAPE_REPRESENTATION" -> {
+                String code1 = dataMap.get(Integer.valueOf(numbers[numbers.length - 1].replace("#", "")));
                 Set<StepShapes> items = new HashSet<>();
-                for (int i = 1;i < numbers.length-1;i++){
-                    String code = dataMap.get(Integer.valueOf(numbers[i].replace("#","").replace("(","").replace(")","")));
+                for (int i = 1; i < numbers.length - 1; i++) {
+                    String code = dataMap.get(Integer.valueOf(numbers[i].replace("#", "").replace("(", "").replace(")", "")));
                     items.add(calculateDecoding(code));
                 }
-                return new AdvancedBrepShapeRepresentation(name,items,calculateDecoding(code1));
+                return new AdvancedBrepShapeRepresentation(name, items, calculateDecoding(code1));
             }
             case "PRODUCT_DEFINITION_SHAPE" -> {
-                String name = numbers[0];
                 String description = numbers[1];
-                String code1 = dataMap.get(Integer.valueOf(numbers[2].replace("#","")));
-                return new ProductDefinitionShape(name,description,calculateDecoding(code1));
+                String code1 = dataMap.get(Integer.valueOf(numbers[2].replace("#", "")));
+                return new ProductDefinitionShape(name, description, calculateDecoding(code1));
             }
-            case "PRODUCT_DEFINITION" ->{
-                String name = numbers[0];
+            case "PRODUCT_DEFINITION" -> {
                 String description = numbers[1];
-                String code1 = dataMap.get(Integer.valueOf(numbers[2].replace("#","")));
-                String code2 = dataMap.get(Integer.valueOf(numbers[3].replace("#","")));
-                return new ProductDefinition(name,description,calculateDecoding(code1),calculateDecoding(code2));
+                String code1 = dataMap.get(Integer.valueOf(numbers[2].replace("#", "")));
+                String code2 = dataMap.get(Integer.valueOf(numbers[3].replace("#", "")));
+                return new ProductDefinition(name, description, calculateDecoding(code1), calculateDecoding(code2));
             }
             case "PRODUCT" -> {
                 String id = numbers[0];
-                String name = numbers[1];
+                name = numbers[1];
                 String description = numbers[2];
-                String code1 = dataMap.get(Integer.valueOf(numbers[3].replace("#","").replace("(","").replace(")","")));
+                String code1 = dataMap.get(Integer.valueOf(numbers[3].replace("#", "").replace("(", "").replace(")", "")));
                 Set<StepShapes> frameSet = new HashSet<>();
                 calculateDecoding(code1);
-                return new Product(id,name,description,frameSet);
+                return new Product(id, name, description, frameSet);
             }
             case "PRODUCT_DEFINITION_FORMATION" -> {
-                    String name = numbers[0];
-                    String description = numbers[1];
-                    String code1 = dataMap.get(Integer.valueOf(numbers[2].replace("#","")));
+                String description = numbers[1];
+                String code1 = dataMap.get(Integer.valueOf(numbers[2].replace("#", "")));
 
-                    return new ProductDefinitionFormation(name,description,calculateDecoding(code1));
+                return new ProductDefinitionFormation(name, description, calculateDecoding(code1));
             }
             case "PRODUCT_DEFINITION_CONTEXT" -> {
-                String name = numbers[0];
                 String disciplineType = numbers[2];
-                String code1 = dataMap.get(Integer.valueOf(numbers[1].replace("#","")));
-                return new ProductDefinitionContext(name,calculateDecoding(code1),disciplineType);
+                String code1 = dataMap.get(Integer.valueOf(numbers[1].replace("#", "")));
+                return new ProductDefinitionContext(name, calculateDecoding(code1), disciplineType);
             }
             case "PRODUCT_CONTEXT" -> {
-                String name = numbers[0];
                 String disciplineType = numbers[2];
-                String code1 = dataMap.get(Integer.valueOf(numbers[1].replace("#","")));
-                return new ProductContext(name,calculateDecoding(code1),disciplineType);
+                String code1 = dataMap.get(Integer.valueOf(numbers[1].replace("#", "")));
+                return new ProductContext(name, calculateDecoding(code1), disciplineType);
             }
             case "APPLICATION_CONTEXT" -> {
-                String name = numbers[0];
                 return new ApplicationContext(name);
             }
             case "AXIS2_PLACEMENT_3D" -> {
-                String name = numbers[0];
-                String location = dataMap.get(Integer.valueOf(numbers[1].replace("#","")));
-                String axis1 = dataMap.get(Integer.valueOf(numbers[2].replace("#","")));
-                String refDirection = dataMap.get(Integer.valueOf(numbers[3].replace("#","")));
+                String location = dataMap.get(Integer.valueOf(numbers[1].replace("#", "")));
+                String axis1 = dataMap.get(Integer.valueOf(numbers[2].replace("#", "")));
+                String refDirection = dataMap.get(Integer.valueOf(numbers[3].replace("#", "")));
 
-                return new axis2Placement3D(name,calculateDecoding(location),calculateDecoding(axis1),calculateDecoding(refDirection));
+                return new Axis2Placement3D(name, calculateDecoding(location), calculateDecoding(axis1), calculateDecoding(refDirection));
             }
             case "CARTESIAN_POINT" -> {
-                String name = numbers[0];
-                List<Double> directionRatios = new ArrayList<>();
-                for (int i = 1;i < numbers.length;i++){
-                    Double code = Double.valueOf(numbers[i].replace("#","").replace("(","").replace(")",""));
-                    directionRatios.add(code);
-                }
-                return new cartesianPoint(name,directionRatios);
+                ;
+                return new CartesianPoint(name, directionRaitiosToList(numbers));
             }
             case "MANIFOLD_SOLID_BREP" -> {
-                String name = numbers[0];
-                String shapeData = dataMap.get(Integer.valueOf(numbers[1].replace("#","")));
-                return new MainfoldSolidBrep(name,calculateDecoding(shapeData));
+                String shapeData = dataMap.get(Integer.valueOf(numbers[1].replace("#", "")));
+                return new MainfoldSolidBrep(name, calculateDecoding(shapeData));
             }
             case "DIRECTION" -> {
-                String name = numbers[0];
-                List<Double> directionRatios = new ArrayList<>();
-                for (int i = 1;i < numbers.length;i++){
-                    Double code = Double.valueOf(numbers[i].replace("#","").replace("(","").replace(")",""));
-                    directionRatios.add(code);
-                }
-                return new Direction(name,directionRatios);
+                List<Double> directionRatios = directionRaitiosToList(numbers);
+                return new Direction(name, directionRatios);
             }
             case "CLOSED_SHELL" -> {
-                String name = numbers[0];
-                Set<StepShapes> setOfFaces = new HashSet<>();
-                for (int i = 1;i < numbers.length;i++){
-                    String code = dataMap.get(Integer.valueOf(numbers[i].replace("#","").replace("(","").replace(")","")));
-                    setOfFaces.add(calculateDecoding(code));
-                }
-                    return new ClosedShell(name,setOfFaces);
+                Set<StepShapes> setOfFaces = getFacesSet(numbers);
+                return new ClosedShell(name, setOfFaces);
+            }
+            case "ADVANCED_FACE" -> {
+                String code = dataMap.get(Integer.valueOf(numbers[numbers.length - 2].replace("#", "").replace("(", "").replace(")", "")));
+                StepShapes faceGeometrie = calculateDecoding(code);
+                Boolean sameSense = !Objects.equals(numbers[numbers.length - 1], ".F.");
+                return new AdvancedFace(name, getItemsSet(numbers), faceGeometrie, sameSense);
+            }
+            case "FACE_BOUND" -> {
+                String code = dataMap.get(Integer.valueOf(numbers[1].replace("#", "")));
+                StepShapes faceLoop = calculateDecoding(code);
+                Boolean orientation = !Objects.equals(numbers[numbers.length - 1], ".F.");
+                return new FaceBound(name, faceLoop, orientation);
+            }
+            case "EDGE_LOOP" -> {
+                return new EdgeLoop(name, getFacesSet(numbers));
+            }
+            case "ORIENTED_EDGE" -> {
+                String edgeStart = numbers[0];
+                String edgeEnd = numbers[0];
+                String code = dataMap.get(Integer.valueOf(numbers[3].replace("#", "")));
+                StepShapes edgeElement = calculateDecoding(code);
+                Boolean orientation = !Objects.equals(numbers[numbers.length - 1], ".F.");
+                return new OrientedEdge(name,edgeStart,edgeEnd,edgeElement,orientation);
+            }
+            case "EDGE_CURVE" -> {
+                String code1 = dataMap.get(Integer.valueOf(numbers[1].replace("#", "")));
+                String code2 = dataMap.get(Integer.valueOf(numbers[2].replace("#", "")));
+                String code3 = dataMap.get(Integer.valueOf(numbers[3].replace("#", "")));
+                StepShapes edgeStart = calculateDecoding(code1);//vertex
+                StepShapes edgeEnd = calculateDecoding(code2);//vertex
+                StepShapes edgeGeometrie = calculateDecoding(code3);//vertex
+                Boolean sameSense = numbers[numbers.length - 1] != ".F.";
+                return new EdgeCurve(name,edgeStart,edgeEnd,edgeGeometrie,sameSense);
+            }
+            case "VERTEX_POINT" -> {
+                String code = dataMap.get(Integer.valueOf(numbers[1].replace("#", "")));
+                StepShapes point = calculateDecoding(code);//vertex
+                return new VertexPoint(name,point);
+            }
+            case "VECTOR" -> {
+                String code = dataMap.get(Integer.valueOf(numbers[1].replace("#", "")));
+                StepShapes orientation = calculateDecoding(code);//vertex
+                Double length = Double.valueOf(dataMap.get(Integer.valueOf(numbers[1].replace("#", ""))));
+                return new StepVector(name,orientation,length);
             }
 
-            default -> {return null;}
+            case "LINE" -> {
+                String code = dataMap.get(Integer.valueOf(numbers[1].replace("#", "")));
+                StepShapes coordinateSystem = calculateDecoding(code);//vertex
+                code = dataMap.get(Integer.valueOf(numbers[1].replace("#", "")));
+                StepShapes vector = calculateDecoding(code);//vertex
+                return new StepLine(name,coordinateSystem,vector);
+            }
+            case "PLANE" -> {
+                String code = dataMap.get(Integer.valueOf(numbers[1].replace("#", "")));
+                StepShapes position = calculateDecoding(code);//vertex
+                return new Plane(name,position);
+            }
+            case "PCURVE" -> {
+                String code = dataMap.get(Integer.valueOf(numbers[1].replace("#", "")));
+                StepShapes basis = calculateDecoding(code);//vertex
+                code = dataMap.get(Integer.valueOf(numbers[1].replace("#", "")));
+                StepShapes curve = calculateDecoding(code);//vertex
+                return new Pcurve(name,basis,curve);
+            }
+            case "DEFINITIONAL_REPRESENTATION" -> {
+                Set<StepShapes> items = getItemsSet(numbers);
+                String code = dataMap.get(Integer.valueOf(numbers[numbers.length-1].replace("#", "")));
+                StepShapes representationContex = calculateDecoding(code);//vertex
+                return new DefinitionalRepresentation(name,items,representationContex);
+            }
+            case "SURFACE_CURVE" -> {
+                String code = dataMap.get(Integer.valueOf(numbers[1].replace("#", "")));
+                StepShapes curve = calculateDecoding(code);//vertex
+                Set<StepShapes> items = new HashSet<>();
+                for (int i = 2; i < numbers.length - 1; i++) {
+                    code = dataMap.get(Integer.valueOf(numbers[i].replace("#", "").replace("(", "").replace(")", "")));
+                    items.add(calculateDecoding(code));
+                }
+                PreferredSurfaceCurveRepresentation representation = getPreferredEnum(numbers[numbers.length-1].replace("#", ""));
+                return new SurfaceCurve(name,curve,items,representation);
+            }
+
+            default -> {
+                return null;
+            }
         }
 
     }
+
+    private PreferredSurfaceCurveRepresentation getPreferredEnum(String s) {
+        switch (s){
+            case ".PCURVE_3D." -> {return PreferredSurfaceCurveRepresentation.CURVE3D;}
+            case ".PCURVE_S2." -> {return PreferredSurfaceCurveRepresentation.pCURVE_s2;}
+            default -> {return PreferredSurfaceCurveRepresentation.PCURVE_s1;}
+        }
+    }
+
+    private Set<StepShapes> getItemsSet(String[] numbers) {
+        Set<StepShapes> items = new HashSet<>();
+        for (int i = 1; i < numbers.length - 2; i++) {
+            String code = dataMap.get(Integer.valueOf(numbers[i].replace("#", "").replace("(", "").replace(")", "")));
+            items.add(calculateDecoding(code));
+        }
+        return items;
+    }
+
+    private Set<StepShapes> getFacesSet(String[] numbers) {
+        Set<StepShapes> setOfFaces = new HashSet<>();
+        for (int i = 1; i < numbers.length; i++) {
+            String code = dataMap.get(Integer.valueOf(numbers[i].replace("#", "").replace("(", "").replace(")", "")));
+            setOfFaces.add(calculateDecoding(code));
+        }
+        return setOfFaces;
+    }
+
+    private List<Double> directionRaitiosToList(String[] numbers) {
+        List<Double> directionRatios = new ArrayList<>();
+        for (int i = 1; i < numbers.length; i++) {
+            Double code = Double.valueOf(numbers[i].replace("#", "").replace("(", "").replace(")", ""));
+            directionRatios.add(code);
+        }
+        return directionRatios;
+    }
+
 
     private void shapeRepresentation(String code){
         String dfs = "This order was placed for QT3000! OK?";

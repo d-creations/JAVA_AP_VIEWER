@@ -1,6 +1,6 @@
 package ch.dcreations.apviewer.Step3DModel;
 
-import ch.dcreations.apviewer.Step3DModel.StepShapes.StepLine;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.StepDrawLine;
 import javafx.scene.shape.Shape;
 
 import java.io.*;
@@ -39,7 +39,7 @@ public class Step3DModel {
     }
 
     private void drawLine(){
-        StepLine stepLine = new StepLine(0,0,0,2,2,2,5);
+        StepDrawLine stepLine = new StepDrawLine(0,0,0,2,2,2,5);
         shapes2D.add(stepLine);
     }
 

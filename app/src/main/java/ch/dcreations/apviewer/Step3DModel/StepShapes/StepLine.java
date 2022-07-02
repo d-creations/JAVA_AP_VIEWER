@@ -1,38 +1,17 @@
 package ch.dcreations.apviewer.Step3DModel.StepShapes;
 
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.AP242Code;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.StepShapes;
 
-public class StepLine extends Line implements StepShapes {
+public class StepLine implements StepShapes {
+    String name;
+    StepShapes coordinateSystem;
+    StepShapes vector;
 
-    double posVecX;
-    double PosVecY;
-    double PosVecZ;
-    double DirVecX;
-    double DirVecY;
-    double DirVecZ;
-    double length;
-
-    public StepLine(double posVecX, double posVecY, double posVecZ, double dirVecX, double dirVecY, double dirVecZ, double length) {
-        super();
-        this.posVecX = posVecX;
-        PosVecY = posVecY;
-        PosVecZ = posVecZ;
-        DirVecX = dirVecX;
-        DirVecY = dirVecY;
-        DirVecZ = dirVecZ;
-        this.length = length;
-        this.setStroke(Color.BLUE);
-        this.setStrokeWidth(5);;
-        calcLine();
-    }
-    public void calcLine(){
-        setStartX(posVecX);
-        setStartY(PosVecY);
-        double endX = posVecX+500;
-        double endY = PosVecY+500;
-        setEndX(endX);
-        setEndY(endY);
+    public StepLine(String name, StepShapes coordinateSystem, StepShapes vector) {
+        this.name = name;
+        this.coordinateSystem = coordinateSystem;
+        this.vector = vector;
     }
 
     @Override
