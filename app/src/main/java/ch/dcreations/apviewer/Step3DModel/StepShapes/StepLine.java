@@ -1,9 +1,9 @@
-package ch.dcreations.apviewer.Step3DModel;
+package ch.dcreations.apviewer.Step3DModel.StepShapes;
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 
-public class StepLine extends Line {
+public class StepLine extends Line implements StepShapes {
 
     double posVecX;
     double PosVecY;
@@ -33,5 +33,10 @@ public class StepLine extends Line {
         double endY = PosVecY+500;
         setEndX(endX);
         setEndY(endY);
+    }
+
+    @Override
+    public AP242Code getTyp() {
+        return AP242Code.LINE;
     }
 }

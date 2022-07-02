@@ -1,5 +1,6 @@
 package ch.dcreations.apviewer.Step3DModel;
 
+import ch.dcreations.apviewer.Step3DModel.StepShapes.StepLine;
 import javafx.scene.shape.Shape;
 
 import java.io.*;
@@ -33,7 +34,8 @@ public class Step3DModel {
                 dataMap.put(numberCode, lineSep[1]);
             }
         }
-        drawLine();
+        AP242Decoder ap242Decoder = new AP242Decoder(dataMap);
+        ap242Decoder.decode();
     }
 
     private void drawLine(){
