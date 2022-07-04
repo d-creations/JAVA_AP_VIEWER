@@ -1,4 +1,4 @@
-package ch.dcreations.apviewer.Step3DModel.StepShapes;
+package ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop;
 
 import ch.dcreations.apviewer.Step3DModel.StepShapes.AP242Code;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.StepShapes;

@@ -1,6 +1,13 @@
 package ch.dcreations.apviewer.Step3DModel;
 
 import ch.dcreations.apviewer.Step3DModel.StepShapes.*;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.Edge.OrientedEdge;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.EdgeLoop;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.FaceBound;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.Surfaces.Plane;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.Surfaces.Surface;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.Vertex.Vertex;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.Vertex.VertexPoint;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -118,8 +125,12 @@ public class AP242Decoder {
                 String location = dataMap.get(Integer.valueOf(numbers[1].replace("#", "")));
                 String axis1 = dataMap.get(Integer.valueOf(numbers[2].replace("#", "")));
                 String refDirection = dataMap.get(Integer.valueOf(numbers[3].replace("#", "")));
-
-                return new Axis2Placement3D(name, calculateDecoding(location), calculateDecoding(axis1), calculateDecoding(refDirection));
+                try {
+                    return new Axis2Placement3D(name, (CartesianPoint) calculateDecoding(location), (Direction) calculateDecoding(axis1), (Direction) calculateDecoding(refDirection));
+                } catch (Exception e) {
+                    System.err.println("AXIS2_PLACEMENT_3D parrameter Error");
+                    return null;
+                }
             }
             case "CARTESIAN_POINT" -> {
                 ;
@@ -139,9 +150,14 @@ public class AP242Decoder {
             }
             case "ADVANCED_FACE" -> {
                 String code = dataMap.get(Integer.valueOf(numbers[numbers.length - 2].replace("#", "").replace("(", "").replace(")", "")));
-                StepShapes faceGeometrie = calculateDecoding(code);
-                Boolean sameSense = !Objects.equals(numbers[numbers.length - 1], ".F.");
-                return new AdvancedFace(name, getItemsSet(numbers), faceGeometrie, sameSense);
+                try {
+                    Surface faceGeometrie = (Surface) calculateDecoding(code);
+                    Boolean sameSense = !Objects.equals(numbers[numbers.length - 1], ".F.");
+                    return new AdvancedFace(name, getItemsSet(numbers, FaceBound.class), faceGeometrie, sameSense);
+                }catch (Exception e){System.err.println("ADVANCED FACE faceGemetrie was not a Surface");
+                    System.err.println(e.getMessage());
+                    return null;
+                }
             }
             case "FACE_BOUND" -> {
                 String code = dataMap.get(Integer.valueOf(numbers[1].replace("#", "")));
@@ -158,7 +174,7 @@ public class AP242Decoder {
                 String code = dataMap.get(Integer.valueOf(numbers[3].replace("#", "")));
                 StepShapes edgeElement = calculateDecoding(code);
                 Boolean orientation = !Objects.equals(numbers[numbers.length - 1], ".F.");
-                return new OrientedEdge(name,edgeStart,edgeEnd,edgeElement,orientation);
+                return new OrientedEdge(name,new Vertex(edgeStart),new Vertex(edgeEnd),edgeElement,orientation);
             }
             case "EDGE_CURVE" -> {
                 String code1 = dataMap.get(Integer.valueOf(numbers[1].replace("#", "")));
@@ -191,8 +207,12 @@ public class AP242Decoder {
             }
             case "PLANE" -> {
                 String code = dataMap.get(Integer.valueOf(numbers[1].replace("#", "")));
-                StepShapes position = calculateDecoding(code);//vertex
-                return new Plane(name,position);
+                try {
+                    Axis2Placement3D position = (Axis2Placement3D) calculateDecoding(code);//vertex
+                    return new Plane(name,position);
+                }catch (Exception e){System.err.println("PLANE position was not a Position");
+                    return null;
+                }
             }
             case "PCURVE" -> {
                 String code = dataMap.get(Integer.valueOf(numbers[1].replace("#", "")));
@@ -202,7 +222,7 @@ public class AP242Decoder {
                 return new Pcurve(name,basis,curve);
             }
             case "DEFINITIONAL_REPRESENTATION" -> {
-                Set<StepShapes> items = getItemsSet(numbers);
+                Set<StepShapes> items = getItemsSet(numbers,StepShapes.class);
                 String code = dataMap.get(Integer.valueOf(numbers[numbers.length-1].replace("#", "")));
                 StepShapes representationContex = calculateDecoding(code);//vertex
                 return new DefinitionalRepresentation(name,items,representationContex);
@@ -234,11 +254,15 @@ public class AP242Decoder {
         }
     }
 
-    private Set<StepShapes> getItemsSet(String[] numbers) {
-        Set<StepShapes> items = new HashSet<>();
+    private <T,U> Set<T> getItemsSet(String[] numbers,U obj) {
+        Set<T> items = new HashSet< T >();
         for (int i = 1; i < numbers.length - 2; i++) {
             String code = dataMap.get(Integer.valueOf(numbers[i].replace("#", "").replace("(", "").replace(")", "")));
-            items.add(calculateDecoding(code));
+            if (obj.equals(calculateDecoding(code).getClass())) {
+            items.add((T)calculateDecoding(code));}
+            else {
+                throw new IllegalArgumentException("At get Items object Type "+ calculateDecoding(code).getClass() +" does not have same Type like T"+ obj.getClass());
+            }
         }
         return items;
     }

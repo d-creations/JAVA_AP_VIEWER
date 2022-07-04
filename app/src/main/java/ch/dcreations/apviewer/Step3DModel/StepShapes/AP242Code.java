@@ -27,5 +27,9 @@ public enum AP242Code {
     VECTOR,
     DEFINITIONAL_REPRESENTATION,
     SURFACE_CURVE,
-
+    SURFACE,
+    LOOP,
+    VERTEX,
+    EDGE,
+    ;
 }
