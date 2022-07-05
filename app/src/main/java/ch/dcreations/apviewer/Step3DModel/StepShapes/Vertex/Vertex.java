@@ -11,7 +11,9 @@ public class Vertex implements StepShapes {
         this.name = name;
     }
 
-
+    public String getName() {
+        return name;
+    }
 
     @Override
     public AP242Code getTyp() {

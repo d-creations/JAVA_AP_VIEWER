@@ -31,5 +31,6 @@ public enum AP242Code {
     LOOP,
     VERTEX,
     EDGE,
+    POINT,
     ;
 }

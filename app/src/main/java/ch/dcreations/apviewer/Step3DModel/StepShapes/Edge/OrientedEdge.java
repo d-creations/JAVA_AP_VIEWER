@@ -6,10 +6,10 @@ import ch.dcreations.apviewer.Step3DModel.StepShapes.Vertex.Vertex;
 
 public class OrientedEdge extends Edge implements StepShapes {
 
-    StepShapes edgeElement;
+    Edge edgeElement;
     Boolean orientation;
 
-    public OrientedEdge(String name, Vertex edgeStart, Vertex edgeEnd, StepShapes edgeElement, Boolean orientation) {
+    public OrientedEdge(String name, Vertex edgeStart, Vertex edgeEnd, Edge edgeElement, Boolean orientation) {
         super(name,edgeStart,edgeEnd);
 
         this.edgeElement = edgeElement;
@@ -18,7 +18,9 @@ public class OrientedEdge extends Edge implements StepShapes {
     }
 
     private void calculateEdge() {
-        @todo
+        if(edgeStart.getName()=="*"){
+            edgeStart = edgeElement.getEdgeStart();
+        }
     }
 
     @Override
