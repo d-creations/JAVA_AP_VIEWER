@@ -11,15 +11,18 @@ public class OrientedEdge extends Edge implements StepShapes {
 
     public OrientedEdge(String name, Vertex edgeStart, Vertex edgeEnd, Edge edgeElement, Boolean orientation) {
         super(name,edgeStart,edgeEnd);
-
         this.edgeElement = edgeElement;
         this.orientation = orientation;
         calculateEdge();
     }
 
     private void calculateEdge() {
-        if(edgeStart.getName()=="*"){
+        if(edgeStart.getName().equals("*")) {
             edgeStart = edgeElement.getEdgeStart();
+        }else {
+            System.err.println(edgeStart.getName());
+        }if(edgeEnd.getName().equals("*")){
+            edgeEnd = edgeElement.getEdgeEnd();
         }
     }
 

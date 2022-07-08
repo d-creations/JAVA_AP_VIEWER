@@ -32,5 +32,8 @@ public enum AP242Code {
     VERTEX,
     EDGE,
     POINT,
+    CURVE,
+    FACE,
+    CONNECTED_FACE_SET,
     ;
 }

@@ -3,7 +3,7 @@ package ch.dcreations.apviewer.Step3DModel.StepShapes.Vertex;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.AP242Code;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.StepShapes;
 
-public class Vertex implements StepShapes {
+public abstract class Vertex implements StepShapes {
 
     String name;
 
@@ -14,6 +14,8 @@ public class Vertex implements StepShapes {
     public String getName() {
         return name;
     }
+
+    public abstract <T> T ifExistGivePoint();
 
     @Override
     public AP242Code getTyp() {

@@ -1,15 +1,22 @@
 package ch.dcreations.apviewer.Step3DModel;
 
 import ch.dcreations.apviewer.Step3DModel.StepShapes.*;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.ConnectedFaceSet.ClosedShell;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.Curve.Curve;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.Curve.SurfaceCurve;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Edge.Edge;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Edge.EdgeCurve;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Edge.OrientedEdge;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.Face.AdvancedFace;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.Face.Face;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.Face.FaceSurface;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.EdgeLoop;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.FaceBound;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Point.CartesianPoint;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Point.Point;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Surfaces.Plane;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Surfaces.Surface;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.Vertex.SimpleVertexD;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Vertex.Vertex;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Vertex.VertexPoint;
 
@@ -149,8 +156,14 @@ public class AP242Decoder {
                 return new Direction(name, directionRatios);
             }
             case "CLOSED_SHELL" -> {
-                Set<StepShapes> setOfFaces = getFacesSet(numbers);
-                return new ClosedShell(name, setOfFaces);
+                try {
+                    Set<Face> setOfFaces = getFacesSet(numbers);
+                    return new ClosedShell(name, setOfFaces);
+                }catch (Exception e) {
+                    System.err.println("CLOSED_SHELL ERROR");
+                    System.err.println(e.getMessage());
+                    return null;
+                }
             }
             case "ADVANCED_FACE" -> {
                 String code = dataMap.get(Integer.valueOf(numbers[numbers.length - 2].replace("#", "").replace("(", "").replace(")", "")));
@@ -165,13 +178,25 @@ public class AP242Decoder {
                 }
             }
             case "FACE_BOUND" -> {
-                String code = dataMap.get(Integer.valueOf(numbers[1].replace("#", "")));
-                StepShapes faceLoop = calculateDecoding(code);
-                Boolean orientation = !Objects.equals(numbers[numbers.length - 1], ".F.");
-                return new FaceBound(name, faceLoop, orientation);
+                try {
+                    String code = dataMap.get(Integer.valueOf(numbers[1].replace("#", "")));
+                    EdgeLoop faceLoop = (EdgeLoop)calculateDecoding(code);
+                    Boolean orientation = !Objects.equals(numbers[numbers.length - 1], ".F.");
+                    return new FaceBound(name, faceLoop, orientation);
+                } catch (Exception e) {
+                    System.err.println("FaceBound failed failed");
+                    System.err.println(e.getMessage());
+                    return null;
+                }
             }
             case "EDGE_LOOP" -> {
-                return new EdgeLoop(name, getFacesSet(numbers));
+                try {
+                return new EdgeLoop(name,getFacesSet(numbers));
+            } catch (Exception e) {
+                System.err.println("EDGE_LOOP failed");
+                System.err.println(e.getMessage());
+                return null;
+            }
             }
             case "ORIENTED_EDGE" -> {
                 try {
@@ -180,7 +205,7 @@ public class AP242Decoder {
                     String code = dataMap.get(Integer.valueOf(numbers[3].replace("#", "")));
                     Edge edgeElement = (Edge) calculateDecoding(code);
                     Boolean orientation = !Objects.equals(numbers[numbers.length - 1], ".F.");
-                    return new OrientedEdge(name, new Vertex(edgeStart), new Vertex(edgeEnd), edgeElement, orientation);
+                    return new OrientedEdge(name, new SimpleVertexD(edgeStart), new SimpleVertexD(edgeEnd), edgeElement, orientation);
                 } catch (Exception e) {
                     System.err.println("ORIENTATED EDGE Vertex or EdgeElement was Wrong" + "Exeption" + e.getMessage());
                     return null;
@@ -193,7 +218,7 @@ public class AP242Decoder {
                     String code3 = dataMap.get(Integer.valueOf(numbers[3].replace("#", "")));
                     Vertex edgeStart = (Vertex) calculateDecoding(code1);//vertex
                     Vertex edgeEnd = (Vertex) calculateDecoding(code2);//vertex
-                    StepShapes edgeGeometrie = calculateDecoding(code3);//vertex
+                    Curve edgeGeometrie = (Curve) calculateDecoding(code3);//vertex
                     Boolean sameSense = numbers[numbers.length - 1] != ".F.";
                     if (edgeStart.getTyp() == AP242Code.VERTEX_POINT && edgeEnd.getTyp() == AP242Code.VERTEX_POINT) {
                         return new EdgeCurve(name, (VertexPoint) calculateDecoding(code1), (VertexPoint) calculateDecoding(code2), edgeGeometrie, sameSense);
@@ -301,11 +326,11 @@ public class AP242Decoder {
         return items;
     }
 
-    private Set<StepShapes> getFacesSet(String[] numbers) {
-        Set<StepShapes> setOfFaces = new HashSet<>();
+    private <T> Set<T> getFacesSet(String[] numbers) {
+        Set<T> setOfFaces = new HashSet<>();
         for (int i = 1; i < numbers.length; i++) {
             String code = dataMap.get(Integer.valueOf(numbers[i].replace("#", "").replace("(", "").replace(")", "")));
-            setOfFaces.add(calculateDecoding(code));
+            setOfFaces.add((T)calculateDecoding(code));
         }
         return setOfFaces;
     }

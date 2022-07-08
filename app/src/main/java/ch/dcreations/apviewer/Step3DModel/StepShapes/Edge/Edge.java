@@ -10,6 +10,8 @@ public class Edge implements StepShapes {
     Vertex edgeStart;
     Vertex edgeEnd;
 
+
+
     public Edge(String name, Vertex edgeStart, Vertex edgeEnd) {
         this.name = name;
         this.edgeStart = edgeStart;
@@ -45,6 +47,7 @@ public class Edge implements StepShapes {
     public void setEdgeEnd(Vertex edgeEnd) {
         this.edgeEnd = edgeEnd;
     }
+
 
     @Override
     public AP242Code getTyp() {

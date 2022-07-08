@@ -5,13 +5,29 @@ import ch.dcreations.apviewer.Step3DModel.StepShapes.StepShapes;
 
 public class FaceBound implements StepShapes {
     String name;
-    StepShapes faceLoop;
+    Loop faceLoop;
+
+    EdgeLoop edgeLoop = null;
     Boolean orientation;
 
-    public FaceBound(String name, StepShapes faceLoop, Boolean orientation) {
+    public FaceBound(String name, Loop faceLoop, Boolean orientation) {
         this.name = name;
         this.faceLoop = faceLoop;
         this.orientation = orientation;
+    }
+    public FaceBound(String name, EdgeLoop faceLoop, Boolean orientation) {
+        this.name = name;
+        this.faceLoop = faceLoop;
+        this.edgeLoop = faceLoop;
+        this.orientation = orientation;
+    }
+
+    public Loop getFaceLoop() {
+        return faceLoop;
+    }
+
+    public EdgeLoop getEdgeLoop() {
+        return edgeLoop;
     }
 
     @Override

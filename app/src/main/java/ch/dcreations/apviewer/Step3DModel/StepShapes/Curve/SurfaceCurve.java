@@ -1,4 +1,4 @@
-package ch.dcreations.apviewer.Step3DModel;
+package ch.dcreations.apviewer.Step3DModel.StepShapes.Curve;
 
 import ch.dcreations.apviewer.Step3DModel.StepShapes.AP242Code;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.PreferredSurfaceCurveRepresentation;
@@ -6,7 +6,7 @@ import ch.dcreations.apviewer.Step3DModel.StepShapes.StepShapes;
 
 import java.util.Set;
 
-public class SurfaceCurve implements StepShapes {
+public class SurfaceCurve extends Curve implements StepShapes {
     String name;
     StepShapes curve;
     Set<StepShapes> items;
