@@ -17,6 +17,10 @@ abstract class ConnectedFaceSet implements StepShapes {
         this.setOfFaces = setOfFaces;
     }
 
+    public Set<Face> getSetOfFaces() {
+        return Set.copyOf(setOfFaces);
+    }
+
     @Override
     public AP242Code getTyp() {
         return AP242Code.CONNECTED_FACE_SET;

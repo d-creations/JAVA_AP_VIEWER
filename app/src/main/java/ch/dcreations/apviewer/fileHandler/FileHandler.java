@@ -1,6 +1,8 @@
 package ch.dcreations.apviewer.fileHandler;
 
 import ch.dcreations.apviewer.Step3DModel.Step3DModel;
+import javafx.scene.shape.Mesh;
+import javafx.scene.shape.Shape;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -18,6 +20,7 @@ public class FileHandler {
     private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
     private static final DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
     private final Step3DModel step3DModel;
+
     public FileHandler(Stage stage, Step3DModel step3DModel) throws IOException {
         FileChooser fileChooser = new FileChooser();
         file = fileChooser.showOpenDialog(stage);
@@ -76,6 +79,7 @@ public class FileHandler {
                 writer.write(charValue); // write char value to console
         } while (charValue != -1); // reached end of file ?
     };
+
 
 
 }

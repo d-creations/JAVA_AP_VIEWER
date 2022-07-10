@@ -26,8 +26,7 @@ import java.util.regex.Pattern;
 
 public class AP242Decoder {
     Map<Integer, String> dataMap;
-    Map<AP242Code, StepShapes> decodedMap;
-    List<StepShapes> ModeliShapes = new ArrayList<>();
+    List<ClosedShell> shells = new ArrayList<>();
 
     public AP242Decoder(Map<Integer, String> dataMap) {
         this.dataMap = dataMap;
@@ -158,6 +157,7 @@ public class AP242Decoder {
             case "CLOSED_SHELL" -> {
                 try {
                     Set<Face> setOfFaces = getFacesSet(numbers);
+                    shells.add(new ClosedShell(name,setOfFaces));
                     return new ClosedShell(name, setOfFaces);
                 }catch (Exception e) {
                     System.err.println("CLOSED_SHELL ERROR");
@@ -345,17 +345,7 @@ public class AP242Decoder {
     }
 
 
-    private void shapeRepresentation(String code) {
-        String dfs = "This order was placed for QT3000! OK?";
-        String pattern = "(.*),(([',\\-,\\._A-Z]*\\([',\\-,\\._A-Z]*\\))*),(.*)";
-
-        // Create a Pattern object
-        Pattern r = Pattern.compile(pattern);
-        Matcher m = r.matcher(code);
-        m.matches();
-        System.out.println(code);
-        // - Subtype: CartesianPoint PointOnSurface PointOnCurve DegeneratePcurve
-
+    public List<ClosedShell> getShells() {
+        return shells;
     }
-
 }
