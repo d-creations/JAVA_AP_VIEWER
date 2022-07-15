@@ -1,8 +1,7 @@
-package ch.dcreations.apviewer.Step3DModel.StepShapes.Edge;
+package ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.Edge;
 
 import ch.dcreations.apviewer.Step3DModel.StepShapes.AP242Code;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Curve.Curve;
-import ch.dcreations.apviewer.Step3DModel.StepShapes.Edge.Edge;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.StepShapes;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Vertex.Vertex;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Vertex.VertexPoint;

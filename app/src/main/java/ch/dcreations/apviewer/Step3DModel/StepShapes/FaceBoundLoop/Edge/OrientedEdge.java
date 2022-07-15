@@ -1,4 +1,4 @@
-package ch.dcreations.apviewer.Step3DModel.StepShapes.Edge;
+package ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.Edge;
 
 import ch.dcreations.apviewer.Step3DModel.StepShapes.AP242Code;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.StepShapes;
@@ -10,7 +10,7 @@ public class OrientedEdge extends Edge implements StepShapes {
     Boolean orientation;
 
     public OrientedEdge(String name, Vertex edgeStart, Vertex edgeEnd, Edge edgeElement, Boolean orientation) {
-        super(name,edgeStart,edgeEnd);
+        super(name,edgeElement.getEdgeStart(),edgeElement.getEdgeEnd());
         this.edgeElement = edgeElement;
         this.orientation = orientation;
         calculateEdge();

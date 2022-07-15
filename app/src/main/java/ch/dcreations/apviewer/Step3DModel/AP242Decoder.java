@@ -4,12 +4,11 @@ import ch.dcreations.apviewer.Step3DModel.StepShapes.*;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.ConnectedFaceSet.ClosedShell;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Curve.Curve;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Curve.SurfaceCurve;
-import ch.dcreations.apviewer.Step3DModel.StepShapes.Edge.Edge;
-import ch.dcreations.apviewer.Step3DModel.StepShapes.Edge.EdgeCurve;
-import ch.dcreations.apviewer.Step3DModel.StepShapes.Edge.OrientedEdge;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.Edge.Edge;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.Edge.EdgeCurve;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.Edge.OrientedEdge;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Face.AdvancedFace;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Face.Face;
-import ch.dcreations.apviewer.Step3DModel.StepShapes.Face.FaceSurface;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.EdgeLoop;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.FaceBound;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Point.CartesianPoint;
@@ -21,8 +20,6 @@ import ch.dcreations.apviewer.Step3DModel.StepShapes.Vertex.Vertex;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Vertex.VertexPoint;
 
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class AP242Decoder {
     Map<Integer, String> dataMap;
@@ -33,26 +30,7 @@ public class AP242Decoder {
     }
 
     public void decode() {
-       /* for (int i = dataMap.keySet().size();i >0;i--){
-            String value = dataMap.get(i);
-            while (value.contains("#")){
-                int start = value.indexOf("#");
-                int comma = value.indexOf(",",start);
-                int bracket = value.indexOf(")",start);
-                int point =  value.indexOf("\'",start);
-                int end = (comma!=-1)&(bracket!=-1)&(comma < bracket)||(bracket==-1) ? comma : bracket;
-                end = (point!=-1)&(end !=-1)&(end < point)||(point==-1) ? end : point;
-                String number = value.substring(start,end);
-                int numberValue = Integer.valueOf(value.substring(start+1,end));
-                value = value.replace(number,dataMap.get(numberValue));
-            }
-            dataMap.put(i,value);
-
-        for (Integer key : dataMap.keySet()){
-        }
-        }*/
-
-        StepShapes part = calculateDecoding(dataMap.get(3));
+        calculateDecoding(dataMap.get(3));
         System.out.println("END");
     }
 
@@ -74,7 +52,6 @@ public class AP242Decoder {
         String[] resived = decodeKey(value);
         String topCode = resived[0];
         String contend = resived[1];
-        String[] ret = contend.split(",");
         String[] numbers = contend.split(",");
         String name = numbers[0];
         switch (topCode) {
@@ -136,14 +113,13 @@ public class AP242Decoder {
                 String axis1 = dataMap.get(Integer.valueOf(numbers[2].replace("#", "")));
                 String refDirection = dataMap.get(Integer.valueOf(numbers[3].replace("#", "")));
                 try {
-                    return new Axis2Placement3D(name, (CartesianPoint) calculateDecoding(location), (Direction) calculateDecoding(axis1), (Direction) calculateDecoding(refDirection));
+                    return new Axis2Placement3D(name, calculateDecoding(location), calculateDecoding(axis1), calculateDecoding(refDirection));
                 } catch (Exception e) {
                     System.err.println("AXIS2_PLACEMENT_3D parrameter Error");
                     return null;
                 }
             }
             case "CARTESIAN_POINT" -> {
-                ;
                 return new CartesianPoint(name, directionRaitiosToList(numbers));
             }
             case "MANIFOLD_SOLID_BREP" -> {
@@ -314,7 +290,7 @@ public class AP242Decoder {
     }
 
     private <T, U> Set<T> getItemsSet(String[] numbers, U obj) {
-        Set<T> items = new HashSet<T>();
+        Set<T> items = new HashSet<>();
         for (int i = 1; i < numbers.length - 2; i++) {
             String code = dataMap.get(Integer.valueOf(numbers[i].replace("#", "").replace("(", "").replace(")", "")));
             if (obj.equals(calculateDecoding(code).getClass())) {

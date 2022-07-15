@@ -10,14 +10,11 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.CullFace;
-import javafx.scene.shape.Mesh;
 import javafx.scene.shape.MeshView;
-import javafx.scene.shape.Shape;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -42,21 +39,23 @@ public class mainViewController {
     void initialize(){
         viewModel = new ViewModel();
         viewModel.addPropertyChangeListener(evt -> {
+
+
+
+
             for (Step3DModel step3DModel1 : viewModel.step3DModels) {
-                for (Mesh shape : step3DModel1.getShapes2D()) {
-                    meshView = new MeshView(shape);
-                    meshView.setMaterial(new PhongMaterial(Color.FIREBRICK));
-                    meshView.setCullFace(CullFace.NONE);
+                for (MeshView shape  : step3DModel1.getShapes2DMesh()) {
+                    shape.setTranslateX(150);
+                    shape.setTranslateY(150);
+                    shape.setMaterial(new PhongMaterial(Color.STEELBLUE));
+                    shape.setCullFace(CullFace.NONE);
+
+                    shape.getTransforms().add(new Scale(2,2));
                     rotateX.setAxis(new Point3D(1,0,0));
                     rotateY.setAxis(new Point3D(0,1,0));
-                    rotateX.setAngle(30);
-                    rotateY.setAngle(30);
-                    meshView.getTransforms().add(rotateX);
-                    meshView.getTransforms().add(rotateY);
-                    meshView.setTranslateX(150);
-                    meshView.setTranslateY(150);
-                    meshView.getTransforms().add(new Scale(2,2));
-                    DrawingPane.getChildren().add(meshView);
+                    shape.getTransforms().add(rotateX);
+                    shape.getTransforms().add(rotateY);
+                    DrawingPane.getChildren().add(shape);
                 }
             }
         });
@@ -87,14 +86,24 @@ public class mainViewController {
 
         if (true){
                     double diff = getMouseX(event) - xPos;
-                    rotateX.setAngle(rotateX.getAngle()+diff);
+                    rotateY.setAngle((rotateY.getAngle()-diff));
+                //step3DModel.rotationWinkelY(diff);
                     xPos = getMouseX(event);
                     diff = getMouseY(event) - yPos;
-                    rotateY.setAngle(rotateY.getAngle()+diff);
+                    rotateX.setAngle((rotateX.getAngle()+diff));
+                //step3DModel.rotationWinkelX(-diff);
                     yPos = getMouseY(event);
+
+
         }
 
 
+    }
+
+    @FXML
+    private void mousePressed(MouseEvent event) {
+        xPos = getMouseX(event);
+        yPos = getMouseY(event);
     }
 
     private double getMouseX(MouseEvent event) {
