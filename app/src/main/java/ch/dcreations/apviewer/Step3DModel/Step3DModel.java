@@ -55,9 +55,6 @@ public class Step3DModel {
 
     private void drawClosedShell(ClosedShell closedShell) {
         MeshView meshView = new MeshView(closedShell.getMeshView());
-        meshView.setMaterial(new PhongMaterial(Color.BLACK));
-        meshView.setCullFace(CullFace.NONE);
-        meshView.setDrawMode(DrawMode.FILL );
         shapes2DMesh.add(meshView);
     }
 

@@ -2,12 +2,12 @@ package ch.dcreations.apviewer.gui;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.PerspectiveCamera;
-import javafx.scene.Scene;
-import javafx.scene.SceneAntialiasing;
-import javafx.scene.SubScene;
+import javafx.scene.*;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
 
 public class UI_run extends Application {
@@ -24,20 +24,17 @@ public class UI_run extends Application {
             FXMLLoader loader = new FXMLLoader(this.getClass().getResource("mainView.fxml"));
 
             Pane rootPane = loader.load();
-            //SubScene subScene = new SubScene(rootPane, 800, 800, true, SceneAntialiasing.BALANCED);
-            //rootPane.getChildren().add( subScene);
-            // fill in scene and stage setup
             Scene scene = new Scene(rootPane,500,500,true);
 
+            Group subPane = new Group();
+            SubScene subScene = new SubScene(subPane, 200, 200, true, SceneAntialiasing.BALANCED);
+            subScene.setFill(Color.CADETBLUE);
 
-            final PerspectiveCamera camera = new PerspectiveCamera(true);
-            final double cameraDistance = 450;
-            camera.setTranslateZ(-cameraDistance);
-            //.setCamera(camera);
-            // configure and show stage
+            // fill in scene and stage setup
             primaryStage.setScene(scene);
             controller = loader.getController();
-            controller.setStage(primaryStage);
+            controller.setStage(primaryStage,subPane);
+            controller.addSubScene(subScene);
             primaryStage.setOnCloseRequest(event -> controller.closeController());
             primaryStage.setTitle("Draw The Star");
             primaryStage.setResizable(false);

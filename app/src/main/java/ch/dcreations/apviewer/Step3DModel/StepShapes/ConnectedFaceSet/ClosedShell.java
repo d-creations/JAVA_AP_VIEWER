@@ -15,6 +15,7 @@ import javafx.collections.ObservableFloatArray;
 import javafx.collections.ObservableIntegerArray;
 import javafx.scene.shape.Mesh;
 import javafx.scene.shape.TriangleMesh;
+import javafx.scene.shape.VertexFormat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +37,7 @@ public class ClosedShell extends ConnectedFaceSet implements StepShapes {
     private Mesh mesh;
 
     private Mesh createMesh(Set<Face> setOfFaces){
-        TriangleMesh mesh = new TriangleMesh();
+        TriangleMesh mesh = new TriangleMesh(VertexFormat.POINT_TEXCOORD);
         ObservableFloatArray vertexArray = new ObservableFloatArrayImpl();
         ObservableIntegerArray facesArray = new ObservableIntegerArrayImpl();
         List<Double> axis = new ArrayList<>();
@@ -62,10 +63,11 @@ public class ClosedShell extends ConnectedFaceSet implements StepShapes {
             vertexArray.addAll(axis.get(k+6).floatValue(),axis.get(k+7).floatValue(),axis.get(k+8).floatValue());
             //vertexArray.addAll(axis.get(axis.size()-(i+3)).floatValue(),axis.get(axis.size()-(i+2)).floatValue(),axis.get(axis.size()-(i+1)).floatValue());
             // ONE FACE WITH 3 Points
+
             facesArray.addAll(i, 0);
             facesArray.addAll(i + 1, 0);
             facesArray.addAll(i + 2, 0);
-            y= y+6;
+            y++;
             i = i+3;
         }
 
@@ -77,8 +79,6 @@ public class ClosedShell extends ConnectedFaceSet implements StepShapes {
         );
         mesh.getFaces().addAll(//Faces
                 facesArray
-        );
-        mesh. getFaceSmoothingGroups().addAll(//smooth
         );
 
         return mesh;
