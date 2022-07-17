@@ -37,5 +37,8 @@ public enum AP242Code {
     CONNECTED_FACE_SET,
 
     STEP_TEXT,
+
+    FACE_SURFACE,
+    ELEMENTARY_SURFACE,
     ;
 }

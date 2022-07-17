@@ -4,13 +4,20 @@ import ch.dcreations.apviewer.Step3DModel.StepShapes.AP242Code;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.StepShapes;
 import javafx.scene.control.TreeItem;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 public class ProductDefinition implements StepShapes {
 
-    String id;
-    String name;
-    String description;
-    StepShapes productDefinitionFormation;
-    StepShapes product;
+    protected final List<Map<String, String>> preferencesMapList = new ArrayList<>();
+
+    protected String id;
+    protected String name;
+    protected String description;
+    protected StepShapes productDefinitionFormation;
+    protected StepShapes product;
 
     public ProductDefinition(String name, String description, StepShapes productDefinitionFormation,StepShapes product) {
         this.name = name;
@@ -34,6 +41,16 @@ public class ProductDefinition implements StepShapes {
 
     @Override
     public String toString() {
-        return AP242Code.PRODUCT_DEFINITION.toString() + "name";
+        return AP242Code.PRODUCT_DEFINITION + " " + name;
+    }
+
+    @Override
+    public List<Map<String, String>> getPreferencesList() {
+        return Collections.unmodifiableList(this.preferencesMapList);
+    }
+
+    @Override
+    public boolean setPreference(Map<String, String> preference) {
+        return false;
     }
 }

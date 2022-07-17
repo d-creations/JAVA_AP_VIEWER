@@ -24,7 +24,7 @@ public class UI_run extends Application {
             FXMLLoader loader = new FXMLLoader(this.getClass().getResource("mainView.fxml"));
 
             Pane rootPane = loader.load();
-            Scene scene = new Scene(rootPane,500,500,true);
+            Scene scene = new Scene(rootPane,1000,600,true);
 
             Group subPane = new Group();
             SubScene subScene = new SubScene(subPane, 200, 200, true, SceneAntialiasing.BALANCED);

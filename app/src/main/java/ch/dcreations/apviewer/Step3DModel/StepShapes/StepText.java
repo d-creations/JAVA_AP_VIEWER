@@ -2,9 +2,15 @@ package ch.dcreations.apviewer.Step3DModel.StepShapes;
 
 import javafx.scene.control.TreeItem;
 
-public class StepText implements StepShapes{
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
-    String name ;
+public class StepText implements StepShapes{
+    protected final List<Map<String, String>> preferencesMapList = new ArrayList<>();
+
+    protected String name ;
 
     public StepText(String name) {
         this.name = name;
@@ -12,7 +18,7 @@ public class StepText implements StepShapes{
 
     @Override
     public AP242Code getTyp() {
-        return null;
+        return AP242Code.STEP_TEXT;
     }
 
 
@@ -25,5 +31,15 @@ public class StepText implements StepShapes{
     @Override
     public String toString() {
         return name;
+    }
+
+    @Override
+    public List<Map<String, String>> getPreferencesList() {
+        return Collections.unmodifiableList(this.preferencesMapList);
+    }
+
+    @Override
+    public boolean setPreference(Map<String, String> preference) {
+        return false;
     }
 }

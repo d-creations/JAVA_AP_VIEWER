@@ -6,6 +6,8 @@ import ch.dcreations.apviewer.Step3DModel.StepShapes.Point.Point;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.StepShapes;
 import javafx.scene.control.TreeItem;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 public class VertexPoint extends Vertex implements StepShapes {
@@ -43,6 +45,16 @@ public class VertexPoint extends Vertex implements StepShapes {
 
     @Override
     public String toString() {
-        return AP242Code.VERTEX_POINT.toString() + "name";
+        return AP242Code.VERTEX_POINT + " " + name;
+    }
+
+    @Override
+    public List<Map<String, String>> getPreferencesList() {
+        return Collections.unmodifiableList(this.preferencesMapList);
+    }
+
+    @Override
+    public boolean setPreference(Map<String, String> preference) {
+        return false;
     }
 }

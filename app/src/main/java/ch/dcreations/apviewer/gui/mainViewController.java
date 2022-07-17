@@ -30,6 +30,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -108,10 +109,23 @@ public class mainViewController {
 
     @FXML
     void treeViewItemSelected(MouseEvent event) {
-        TreeItem<StepShapes> treeItem = treeView.getSelectionModel().getSelectedItem();
-        List<String> text = new ArrayList<>();
-        text.add(treeItem.getValue().getTyp().toString());
-        viewModel.setList(text);
+        if (treeView.getSelectionModel().getSelectedItem() != null) {
+            TreeItem<StepShapes> treeItem = treeView.getSelectionModel().getSelectedItem();
+            List<String> text = new ArrayList<>();
+            if (treeItem.getValue().getTyp()!= null) {
+                if (treeItem.getValue().getPreferencesList() != null) {
+                    for (Map<String, String> preferencesMapList : treeItem.getValue().getPreferencesList()) {
+                        if (preferencesMapList != null) {
+                            for (String key : preferencesMapList.keySet()) {
+                                text.add(key);
+                                text.add(preferencesMapList.get(key));
+                            }
+                        }
+                    }
+                }
+            }
+            viewModel.setList(text);
+        }
     }
     @FXML
     private void selectAFile() throws IOException {

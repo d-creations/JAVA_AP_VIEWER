@@ -2,12 +2,15 @@ package ch.dcreations.apviewer.Step3DModel.StepShapes;
 
 import javafx.scene.control.TreeItem;
 
-import java.util.Set;
+import java.util.*;
 
 public class DefinitionalRepresentation implements StepShapes {
-    String name;
-    Set<StepShapes> items;
-    StepShapes representationContext;
+
+    protected final List<Map<String, String>> preferencesMapList = new ArrayList<>();
+
+    protected String name;
+    protected Set<StepShapes> items;
+    protected StepShapes representationContext;
 
     public DefinitionalRepresentation(String name, Set<StepShapes> items, StepShapes representationContext) {
         this.name = name;
@@ -31,6 +34,15 @@ public class DefinitionalRepresentation implements StepShapes {
 
     @Override
     public String toString() {
-        return AP242Code.DEFINITIONAL_REPRESENTATION.toString() + "name";
+        return AP242Code.DEFINITIONAL_REPRESENTATION + " " +name;
+    }
+    @Override
+    public List<Map<String, String>> getPreferencesList() {
+        return Collections.unmodifiableList(this.preferencesMapList);
+    }
+
+    @Override
+    public boolean setPreference(Map<String, String> preference) {
+        return false;
     }
 }

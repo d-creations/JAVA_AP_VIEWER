@@ -8,8 +8,7 @@ import java.util.*;
 
 public class CartesianPoint extends Point implements StepShapes {
 
-
-    Map<CartasianAxisE,Double> directionValueMap = new TreeMap<>();
+    protected Map<CartasianAxisE,Double> directionValueMap = new TreeMap<>();
     public CartesianPoint(String name, List<Double> directionRatios) {
         super(name);
         List<CartasianAxisE> axisEList = new ArrayList<>();
@@ -18,7 +17,7 @@ public class CartesianPoint extends Point implements StepShapes {
         axisEList.add(CartasianAxisE.Z);
         Iterator<CartasianAxisE> i = axisEList.iterator();
         for (Double directions: directionRatios){
-            directionValueMap.put(i.next(),directions.doubleValue());
+            directionValueMap.put(i.next(), directions);
         }
     }
 
@@ -35,12 +34,22 @@ public class CartesianPoint extends Point implements StepShapes {
 
     @Override
     public TreeItem<StepShapes> getTreeItem() {
-        TreeItem<StepShapes> treeItem = new TreeItem<>(this);
-        return treeItem;
+        return new TreeItem<>(this);
     }
 
     @Override
     public String toString() {
-        return AP242Code.CARTESIAN_POINT.toString() + "name";
+        return AP242Code.CARTESIAN_POINT + " " + name;
     }
+
+    @Override
+    public List<Map<String, String>> getPreferencesList() {
+        return Collections.unmodifiableList(this.preferencesMapList);
+    }
+
+    @Override
+    public boolean setPreference(Map<String, String> preference) {
+        return false;
+    }
+
 }

@@ -8,19 +8,24 @@ import ch.dcreations.apviewer.Step3DModel.StepShapes.Vertex.Vertex;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Vertex.VertexPoint;
 import javafx.scene.control.TreeItem;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 public class Edge implements StepShapes {
-    String name;
-    Vertex edgeStart;
-    Vertex edgeEnd;
+    protected String name;
+    protected Vertex edgeStart;
+    protected Vertex edgeEnd;
 
-    double startX;
-    double startY;
-    double startZ;
-    double endX;
-    double endY;
-    double endZ;
+    protected final List<Map<String, String>> preferencesMapList = new ArrayList<>();
+
+    protected double startX;
+    protected double startY;
+    protected double startZ;
+    protected double endX;
+    protected double endY;
+    protected double endZ;
 
     public Edge(String name, Vertex edgeStart, Vertex edgeEnd) {
         this.name = name;
@@ -80,13 +85,6 @@ public class Edge implements StepShapes {
         return edgeEnd;
     }
 
-    public void setEdgeStart(Vertex edgeStart) {
-        this.edgeStart = edgeStart;
-    }
-
-    public void setEdgeEnd(Vertex edgeEnd) {
-        this.edgeEnd = edgeEnd;
-    }
     @Override
     public AP242Code getTyp() {
         return AP242Code.EDGE;
@@ -121,12 +119,21 @@ public class Edge implements StepShapes {
     }
     @Override
     public TreeItem<StepShapes> getTreeItem() {
-        TreeItem<StepShapes> treeItem = new TreeItem<>(this);
-        return treeItem;
+        return new TreeItem<>(this);
     }
 
     @Override
     public String toString() {
-        return AP242Code.EDGE.toString() + "name";
+        return AP242Code.EDGE + " " + name;
+    }
+
+    @Override
+    public List<Map<String, String>> getPreferencesList() {
+        return Collections.unmodifiableList(this.preferencesMapList);
+    }
+
+    @Override
+    public boolean setPreference(Map<String, String> preference) {
+        return false;
     }
 }
