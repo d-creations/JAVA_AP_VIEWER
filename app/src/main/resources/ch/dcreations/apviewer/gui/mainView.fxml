@@ -33,11 +33,13 @@
 -->
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
@@ -77,10 +79,19 @@
         </Menu>
       </menus>
     </MenuBar>
-      <SplitPane dividerPositions="0.29797979797979796" prefHeight="160.0" prefWidth="200.0">
+      <SplitPane fx:id="TreeView" dividerPositions="0.29797979797979796, 0.5" prefHeight="160.0" prefWidth="200.0">
         <items>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="500.0" prefWidth="100.0" />
-          <AnchorPane fx:id="DrawingPane" minHeight="400.0" minWidth="0.0" onMouseClicked="#mousePressed" onMouseDragged="#mouseHandler" prefHeight="322.0" prefWidth="446.0" />
+          <AnchorPane fx:id="ProjectPane" minHeight="0.0" minWidth="0.0" prefHeight="500.0" prefWidth="100.0">
+               <children>
+                  <TreeView fx:id="treeView" layoutX="-7.0" onMouseClicked="#treeViewItemSelected" prefHeight="234.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="-7.0" AnchorPane.rightAnchor="7.0" AnchorPane.topAnchor="0.0" />
+               </children>
+            </AnchorPane>
+          <AnchorPane fx:id="DrawingPane" maxHeight="1200.0" maxWidth="1200.0" minHeight="400.0" minWidth="0.0" onMouseDragged="#mouseHandler" onMousePressed="#mousePressed" prefHeight="400.0" prefWidth="359.0" />
+            <AnchorPane fx:id="PropertiesPane" minHeight="0.0" minWidth="0.0" prefHeight="400.0" prefWidth="100.0">
+               <children>
+                  <ListView fx:id="propertyViewList" editable="true" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+               </children>
+            </AnchorPane>
         </items>
          <VBox.margin>
             <Insets />

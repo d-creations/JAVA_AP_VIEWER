@@ -2,6 +2,7 @@ package ch.dcreations.apviewer.Step3DModel.StepShapes;
 
 import ch.dcreations.apviewer.Step3DModel.StepShapes.AP242Code;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.StepShapes;
+import javafx.scene.control.TreeItem;
 
 import java.util.Set;
 
@@ -23,5 +24,19 @@ public class Product implements StepShapes {
     @Override
     public AP242Code getTyp() {
         return AP242Code.PRODUCT;
+    }
+
+    @Override
+    public TreeItem<StepShapes> getTreeItem() {
+        TreeItem<StepShapes> treeItem = new TreeItem<>(this);
+        for(StepShapes item : frameReferences){
+            treeItem.getChildren().add(item.getTreeItem());
+        }
+        return treeItem;
+    }
+
+    @Override
+    public String toString() {
+        return AP242Code.PRODUCT.toString() + "name";
     }
 }

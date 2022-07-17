@@ -13,6 +13,7 @@ import com.sun.javafx.collections.ObservableFloatArrayImpl;
 import com.sun.javafx.collections.ObservableIntegerArrayImpl;
 import javafx.collections.ObservableFloatArray;
 import javafx.collections.ObservableIntegerArray;
+import javafx.scene.control.TreeItem;
 import javafx.scene.shape.Mesh;
 import javafx.scene.shape.TriangleMesh;
 import javafx.scene.shape.VertexFormat;
@@ -80,11 +81,24 @@ public class ClosedShell extends ConnectedFaceSet implements StepShapes {
         mesh.getFaces().addAll(//Faces
                 facesArray
         );
-
         return mesh;
     }
 
     public Mesh getMeshView() {
         return this.mesh;
+    }
+
+    @Override
+    public TreeItem<StepShapes> getTreeItem() {
+        TreeItem<StepShapes> treeItem = new TreeItem<>(this);
+        for(Face face : this.getSetOfFaces()){
+            treeItem.getChildren().add(face.getTreeItem());
+        }
+        return treeItem;
+    }
+
+    @Override
+    public String toString() {
+        return AP242Code.CLOSED_SHELL.toString() + "name";
     }
 }

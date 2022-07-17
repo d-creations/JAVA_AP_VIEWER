@@ -1,6 +1,9 @@
 package ch.dcreations.apviewer.Step3DModel;
 
 import ch.dcreations.apviewer.Step3DModel.StepShapes.ConnectedFaceSet.ClosedShell;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.StepShapes;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.StepText;
+import javafx.scene.control.TreeItem;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.paint.PhongMaterial;
@@ -11,16 +14,22 @@ import java.util.*;
 public class Step3DModel {
 
     String data = "";
+    String name ;
     List<Paint> colorsList = new ArrayList<>();
     int colorIndex = 0;
     Map<Integer,String> dataMap = new TreeMap<>();
     List<MeshView> shapes2DMesh = new ArrayList<>();
 
+    List<StepShapes> stepShapesList = new ArrayList<>();
+
     AP242Decoder ap242Decoder;
     String header = "";
 
-    public void parseTheFile(Reader reader) throws IOException {
+    public Step3DModel(String name) {
+        this.name = name;
+    }
 
+    public void parseTheFile(Reader reader) throws IOException {
         colorsList.add(Color.BLUE);
         colorsList.add(Color.BLUEVIOLET);
         colorsList.add(Color.GREEN);
@@ -49,6 +58,7 @@ public class Step3DModel {
         ap242Decoder.decode();
         for ( ClosedShell closedShell : ap242Decoder.getShells()){
             drawClosedShell(closedShell);
+            stepShapesList.add(closedShell);
         }
     }
 
@@ -72,4 +82,20 @@ public class Step3DModel {
         return Collections.unmodifiableList(shapes2DMesh);
     }
 
+    public TreeItem<StepShapes> getStepShapes() {
+        TreeItem<StepShapes> treeItem = new TreeItem<>(new StepText("Model"));
+        for (StepShapes stepShapes : stepShapesList){
+            treeItem.getChildren().add(stepShapes.getTreeItem());
+        }
+
+        return treeItem;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }

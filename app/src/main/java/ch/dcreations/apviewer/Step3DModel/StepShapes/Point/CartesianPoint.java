@@ -2,6 +2,7 @@ package ch.dcreations.apviewer.Step3DModel.StepShapes.Point;
 
 import ch.dcreations.apviewer.Step3DModel.StepShapes.AP242Code;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.StepShapes;
+import javafx.scene.control.TreeItem;
 
 import java.util.*;
 
@@ -30,5 +31,16 @@ public class CartesianPoint extends Point implements StepShapes {
     @Override
     public AP242Code getTyp() {
         return AP242Code.CARTESIAN_POINT;
+    }
+
+    @Override
+    public TreeItem<StepShapes> getTreeItem() {
+        TreeItem<StepShapes> treeItem = new TreeItem<>(this);
+        return treeItem;
+    }
+
+    @Override
+    public String toString() {
+        return AP242Code.CARTESIAN_POINT.toString() + "name";
     }
 }

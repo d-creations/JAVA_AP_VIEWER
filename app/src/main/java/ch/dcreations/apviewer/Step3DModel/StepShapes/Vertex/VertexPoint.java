@@ -4,6 +4,7 @@ import ch.dcreations.apviewer.Step3DModel.StepShapes.AP242Code;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Point.CartesianPoint;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Point.Point;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.StepShapes;
+import javafx.scene.control.TreeItem;
 
 import java.util.Map;
 
@@ -31,5 +32,17 @@ public class VertexPoint extends Vertex implements StepShapes {
     @Override
     public AP242Code getTyp() {
         return AP242Code.VERTEX_POINT;
+    }
+
+    @Override
+    public TreeItem<StepShapes> getTreeItem() {
+        TreeItem<StepShapes> treeItem = new TreeItem<>(this);
+        treeItem.getChildren().add(point.getTreeItem());
+        return treeItem;
+    }
+
+    @Override
+    public String toString() {
+        return AP242Code.VERTEX_POINT.toString() + "name";
     }
 }

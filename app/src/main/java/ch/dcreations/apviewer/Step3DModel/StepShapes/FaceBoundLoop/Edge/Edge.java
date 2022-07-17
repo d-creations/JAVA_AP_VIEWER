@@ -6,6 +6,7 @@ import ch.dcreations.apviewer.Step3DModel.StepShapes.Point.Point;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.StepShapes;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Vertex.Vertex;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Vertex.VertexPoint;
+import javafx.scene.control.TreeItem;
 
 import java.util.Map;
 
@@ -117,5 +118,15 @@ public class Edge implements StepShapes {
 
     public double getEndZ() {
         return endZ;
+    }
+    @Override
+    public TreeItem<StepShapes> getTreeItem() {
+        TreeItem<StepShapes> treeItem = new TreeItem<>(this);
+        return treeItem;
+    }
+
+    @Override
+    public String toString() {
+        return AP242Code.EDGE.toString() + "name";
     }
 }

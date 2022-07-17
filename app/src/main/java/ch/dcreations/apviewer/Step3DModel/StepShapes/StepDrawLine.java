@@ -1,5 +1,6 @@
 package ch.dcreations.apviewer.Step3DModel.StepShapes;
 
+import javafx.scene.control.TreeItem;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 
@@ -39,4 +40,16 @@ public class StepDrawLine extends Line implements StepShapes {
     public AP242Code getTyp() {
         return AP242Code.LINE;
     }
+
+    @Override
+    public TreeItem<StepShapes> getTreeItem() {
+        TreeItem<StepShapes> treeItem = new TreeItem<>(this);
+        return treeItem;
+    }
+
+    @Override
+    public String toString() {
+        return AP242Code.LINE.toString() + "name";
+    }
+
 }

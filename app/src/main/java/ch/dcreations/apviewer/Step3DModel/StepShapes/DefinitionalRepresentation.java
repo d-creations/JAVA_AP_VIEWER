@@ -1,5 +1,7 @@
 package ch.dcreations.apviewer.Step3DModel.StepShapes;
 
+import javafx.scene.control.TreeItem;
+
 import java.util.Set;
 
 public class DefinitionalRepresentation implements StepShapes {
@@ -16,5 +18,19 @@ public class DefinitionalRepresentation implements StepShapes {
     @Override
     public AP242Code getTyp() {
         return AP242Code.DEFINITIONAL_REPRESENTATION;
+    }
+
+    @Override
+    public TreeItem<StepShapes> getTreeItem() {
+        TreeItem<StepShapes> treeItem = new TreeItem<>(this);
+        for(StepShapes item : items){
+            treeItem.getChildren().add(item.getTreeItem());
+        }
+        return treeItem;
+    }
+
+    @Override
+    public String toString() {
+        return AP242Code.DEFINITIONAL_REPRESENTATION.toString() + "name";
     }
 }

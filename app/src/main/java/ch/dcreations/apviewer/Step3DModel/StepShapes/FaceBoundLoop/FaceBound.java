@@ -4,6 +4,7 @@ import ch.dcreations.apviewer.Step3DModel.StepShapes.AP242Code;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.Edge.Edge;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Point.CartesianPoint;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.StepShapes;
+import javafx.scene.control.TreeItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,15 +65,15 @@ public class FaceBound implements StepShapes {
                 Double y2 = tempAllEdges.get(0).getEndY();
                 Double z2 = tempAllEdges.get(0).getEndZ();
                 this.stepDrawLinesForTriangle.add(getCartasianPoint(x2,y2,z2));//p2    -2
-                Double x3 = tempAllEdges.get(i).getEndX();
-                Double y3 = tempAllEdges.get(i).getEndY();
-                Double z3 = tempAllEdges.get(i).getEndZ();
+                Double x3 = tempAllEdges.get(i).getStartX();
+                Double y3 = tempAllEdges.get(i).getStartY();
+                Double z3 = tempAllEdges.get(i).getStartZ();
                 this.stepDrawLinesForTriangle.add(getCartasianPoint(x3,y3,z3));//p3      -END
                 this.stepDrawLinesForTriangle.add(getCartasianPoint(x1,y1,z1));//p4     -1
                 this.stepDrawLinesForTriangle.add(getCartasianPoint(x2,y2,z2));//P5      -2
-                Double x4 = tempAllEdges.get(i).getStartX();
-                Double y4 = tempAllEdges.get(i).getStartY();
-                Double z4 = tempAllEdges.get(i).getStartZ();
+                Double x4 = tempAllEdges.get(i).getEndX();
+                Double y4 = tempAllEdges.get(i).getEndY();
+                Double z4 = tempAllEdges.get(i).getEndZ();
                 this.stepDrawLinesForTriangle.add(getCartasianPoint(x4,y4,z4));//P6      -START
                 this.stepDrawLinesForTriangle.add(getCartasianPoint(x3,y3,z3));//p7     END
                 this.stepDrawLinesForTriangle.add(getCartasianPoint(x4,y4,z4));//p8     STAR
@@ -113,5 +114,20 @@ public class FaceBound implements StepShapes {
         directions.add(z);
         CartesianPoint point = new CartesianPoint("",directions);
         return point;
+    }
+
+
+    @Override
+    public TreeItem<StepShapes> getTreeItem() {
+        TreeItem<StepShapes> treeItem = new TreeItem<>(this);
+        for(Edge cartesianPoint : this.edgeLoop.getOrientedEdges()){
+            treeItem.getChildren().add(cartesianPoint.getTreeItem());
+        }
+        return treeItem;
+    }
+
+    @Override
+    public String toString() {
+        return AP242Code.FACE_BOUND.toString() + "name";
     }
 }

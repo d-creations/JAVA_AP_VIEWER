@@ -1,17 +1,21 @@
 package ch.dcreations.apviewer.Step3DModel.StepShapes;
 
-import ch.dcreations.apviewer.Step3DModel.StepShapes.AP242Code;
-import ch.dcreations.apviewer.Step3DModel.StepShapes.StepShapes;
 import javafx.scene.control.TreeItem;
 
-public class ApplicationContext implements StepShapes {
-    public ApplicationContext(String name) {
+public class StepText implements StepShapes{
+
+    String name ;
+
+    public StepText(String name) {
+        this.name = name;
     }
 
     @Override
     public AP242Code getTyp() {
-        return AP242Code.APPLICATION_CONTEXT;
+        return null;
     }
+
+
     @Override
     public TreeItem<StepShapes> getTreeItem() {
         TreeItem<StepShapes> treeItem = new TreeItem<>(this);
@@ -20,6 +24,6 @@ public class ApplicationContext implements StepShapes {
 
     @Override
     public String toString() {
-        return AP242Code.APPLICATION_CONTEXT.toString() + "name";
+        return name;
     }
 }
