@@ -80,6 +80,10 @@ public class FileHandler {
         } while (charValue != -1); // reached end of file ?
     };
 
+    public String getFileName(){
+        return file.getName();
+    }
+
 
 
 }

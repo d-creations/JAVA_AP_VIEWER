@@ -33,30 +33,32 @@
 -->
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.dcreations.apviewer.gui.mainViewController">
+<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.dcreations.apviewer.gui.mainViewController">
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
         <Menu mnemonicParsing="false" text="File">
           <items>
-            <MenuItem mnemonicParsing="false" onAction="#selectAFile" text="Open…" />
-            <MenuItem mnemonicParsing="false" text="Close" />
-            <MenuItem mnemonicParsing="false" text="Save" />
+            <MenuItem mnemonicParsing="false" onAction="#selectAFile" text="Open a file" />
+            <MenuItem mnemonicParsing="false" onAction="#closeFile" text="Close the File" />
+            <MenuItem mnemonicParsing="false" text="Save" visible="false" />
             <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Preferences…" />
+            <MenuItem mnemonicParsing="false" text="Preferences…" visible="false" />
             <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Quit" />
+            <MenuItem mnemonicParsing="false" text="Quit" visible="false" />
           </items>
         </Menu>
-        <Menu mnemonicParsing="false" text="Edit">
+        <Menu mnemonicParsing="false" text="Edit" visible="false">
           <items>
             <MenuItem mnemonicParsing="false" text="Undo" />
             <MenuItem mnemonicParsing="false" text="Redo" />
@@ -70,17 +72,26 @@
             <MenuItem mnemonicParsing="false" text="Unselect All" />
           </items>
         </Menu>
-        <Menu mnemonicParsing="false" text="Help">
+        <Menu mnemonicParsing="false" text="Help" visible="false">
           <items>
             <MenuItem mnemonicParsing="false" text="About MyHelloApp" />
           </items>
         </Menu>
       </menus>
     </MenuBar>
-      <SplitPane dividerPositions="0.29797979797979796" prefHeight="160.0" prefWidth="200.0">
+      <SplitPane fx:id="TreeView" dividerPositions="0.25, 0.8" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="2000.0" prefWidth="2000.0">
         <items>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="500.0" prefWidth="100.0" />
-          <AnchorPane fx:id="DrawingPane" minHeight="400.0" minWidth="0.0" onMouseDragged="#mouseHandler" prefHeight="322.0" prefWidth="446.0" />
+          <AnchorPane fx:id="ProjectPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="500.0" prefWidth="100.0">
+               <children>
+                  <TreeView fx:id="treeView" layoutX="-7.0" onMouseClicked="#treeViewItemSelected" prefHeight="234.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="-7.0" AnchorPane.rightAnchor="7.0" AnchorPane.topAnchor="0.0" />
+               </children>
+            </AnchorPane>
+          <AnchorPane fx:id="DrawingPane" maxHeight="800.0" maxWidth="800.0" minHeight="400.0" minWidth="0.0" onMouseDragged="#mouseHandler" onMousePressed="#mousePressed" prefHeight="500.0" prefWidth="500.0" />
+            <AnchorPane fx:id="PropertiesPane" minHeight="0.0" minWidth="0.0" prefHeight="400.0" prefWidth="100.0">
+               <children>
+                  <ListView fx:id="propertyViewList" editable="true" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+               </children>
+            </AnchorPane>
         </items>
          <VBox.margin>
             <Insets />

@@ -16,8 +16,6 @@ public class App {
     public static void main(String[] args) {
         // initialize logger level
         LogConfiguration.setLogLevel(mainViewController.class, Level.FINE);
-
-
         Application.launch(UI_run.class, args);
     }
 }
