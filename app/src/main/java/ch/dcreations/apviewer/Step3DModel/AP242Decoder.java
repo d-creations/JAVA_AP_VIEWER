@@ -53,7 +53,7 @@ public class AP242Decoder {
         String topCode = resived[0];
         String contend = resived[1];
         String[] numbers = contend.split(",");
-        String name = numbers[0];
+        String name = numbers[0].replace("\"","");
         switch (topCode) {
             case "SHAPE_DEFINITION_REPRESENTATION" -> {
                 String code1 = dataMap.get(Integer.valueOf(numbers[0].replace("#", "")));

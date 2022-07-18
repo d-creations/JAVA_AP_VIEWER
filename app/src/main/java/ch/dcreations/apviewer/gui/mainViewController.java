@@ -92,6 +92,7 @@ public class mainViewController {
 
                     TreeItem<StepShapes> treeItem = new TreeItem<>(new StepText("Project"));
                     treeItem.getChildren().add(step3DModel1.getStepShapes());
+                    treeView.setCache(true);
                     treeView.setEditable(true);
                     treeView.setRoot(treeItem);
 

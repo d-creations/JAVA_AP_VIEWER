@@ -29,11 +29,11 @@ public class AdvancedFace extends FaceSurface implements StepShapes {
             treeItem.getChildren().add(faceBound.getTreeItem());
         }
         treeItem.getChildren().add(faceGeometrie.getTreeItem());
-        return new TreeItem<>(this);
+        return treeItem;
     }
     @Override
     public String toString() {
-        return AP242Code.ADVANCED_FACE + " " + name;
+        return AP242Code.ADVANCED_FACE + "" + name;
     }
 
     @Override
