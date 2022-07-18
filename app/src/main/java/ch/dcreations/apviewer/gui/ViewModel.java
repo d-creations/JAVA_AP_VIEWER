@@ -43,4 +43,10 @@ public class ViewModel {
             list.add(line);
         }
     }
+
+    public void clearStepModel() {
+        step3DModels.clear();
+        list.clear();
+        update(step3DModels);
+    }
 }

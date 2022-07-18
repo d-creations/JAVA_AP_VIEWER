@@ -39,7 +39,10 @@ public class EdgeCurve extends Edge implements StepShapes {
 
     @Override
     public TreeItem<StepShapes> getTreeItem() {
-        return new TreeItem<>(this);
+        TreeItem<StepShapes> treeItem = new TreeItem<>(this);
+        treeItem.getChildren().add(edgeStart.getTreeItem());
+        treeItem.getChildren().add(edgeEnd.getTreeItem());
+        return treeItem;
     }
 
     @Override

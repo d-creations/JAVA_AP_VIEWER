@@ -6,7 +6,6 @@ import ch.dcreations.apviewer.Step3DModel.StepShapes.StepText;
 import javafx.scene.control.TreeItem;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.*;
 import java.io.*;
 import java.util.*;
@@ -56,10 +55,13 @@ public class Step3DModel {
         }
         ap242Decoder = new AP242Decoder(dataMap);
         ap242Decoder.decode();
-        for ( ClosedShell closedShell : ap242Decoder.getShells()){
+        for ( ClosedShell closedShell : ap242Decoder.getDrawingShells()){
             drawClosedShell(closedShell);
-            stepShapesList.add(closedShell);
         }
+        for (StepShapes stepShapes : ap242Decoder.getStepShapes()){
+            stepShapesList.add(stepShapes);
+        }
+
     }
 
 

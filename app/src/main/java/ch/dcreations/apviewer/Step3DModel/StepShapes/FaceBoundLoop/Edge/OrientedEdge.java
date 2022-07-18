@@ -1,6 +1,7 @@
 package ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.Edge;
 
 import ch.dcreations.apviewer.Step3DModel.StepShapes.AP242Code;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.FaceBound;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.StepShapes;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Vertex.Vertex;
 import javafx.scene.control.TreeItem;
@@ -42,7 +43,9 @@ public class OrientedEdge extends Edge implements StepShapes {
     }
     @Override
     public TreeItem<StepShapes> getTreeItem() {
-        return new TreeItem<>(this);
+        TreeItem<StepShapes> treeItem = new TreeItem<>(this);
+        treeItem.getChildren().add(edgeElement.getTreeItem());
+        return treeItem;
     }
 
     @Override

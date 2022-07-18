@@ -7,11 +7,10 @@ import ch.dcreations.apviewer.Step3DModel.StepShapes.StepShapes;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Vertex.Vertex;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Vertex.VertexPoint;
 import javafx.scene.control.TreeItem;
+import javafx.scene.shape.Shape3D;
+import javafx.scene.shape.Sphere;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Edge implements StepShapes {
     protected String name;
@@ -46,6 +45,14 @@ public class Edge implements StepShapes {
             endY = pointEnd.get(y);
             endZ = pointEnd.get(z);
         }
+        Map<String,String> preferencesMap = new HashMap<>();
+        preferencesMap.put("Start X",Double.toString(startX));
+        preferencesMap.put("Start Y",Double.toString(startY));
+        preferencesMap.put("Start Z",Double.toString(startZ));
+        preferencesMap.put("End X",Double.toString(endX));
+        preferencesMap.put("End Y",Double.toString(endY));
+        preferencesMap.put("End Z",Double.toString(endZ));
+        preferencesMapList.add(preferencesMap);
     }
 
     public Edge(String name, VertexPoint edgeStart, VertexPoint edgeEnd) {
@@ -67,6 +74,14 @@ public class Edge implements StepShapes {
             endY = pointEnd.get(y);
             endZ = pointEnd.get(z);
         }
+        Map<String,String> preferencesMap = new HashMap<>();
+        preferencesMap.put("Start X",Double.toString(startX));
+        preferencesMap.put("Start Y",Double.toString(startY));
+        preferencesMap.put("Start Z",Double.toString(startZ));
+        preferencesMap.put("End X",Double.toString(endX));
+        preferencesMap.put("End Y",Double.toString(endY));
+        preferencesMap.put("End Z",Double.toString(endZ));
+        preferencesMapList.add(preferencesMap);
     }
 
     public void setName(String name) {
@@ -119,7 +134,10 @@ public class Edge implements StepShapes {
     }
     @Override
     public TreeItem<StepShapes> getTreeItem() {
-        return new TreeItem<>(this);
+        TreeItem<StepShapes> treeItem = new TreeItem<>(this);
+        treeItem.getChildren().add(edgeStart.getTreeItem());
+        treeItem.getChildren().add(edgeEnd.getTreeItem());
+        return treeItem;
     }
 
     @Override
@@ -135,5 +153,10 @@ public class Edge implements StepShapes {
     @Override
     public boolean setPreference(Map<String, String> preference) {
         return false;
+    }
+
+    @Override
+    public Shape3D getShape() {
+       return null;
     }
 }

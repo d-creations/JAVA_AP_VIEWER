@@ -3,6 +3,8 @@ package ch.dcreations.apviewer.Step3DModel.StepShapes.Vertex;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.AP242Code;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.StepShapes;
 import javafx.scene.control.TreeItem;
+import javafx.scene.shape.Shape3D;
+import javafx.scene.shape.Sphere;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,4 +51,12 @@ public abstract class Vertex implements StepShapes {
     public boolean setPreference(Map<String, String> preference) {
         return false;
     }
+
+    @Override
+    public Shape3D getShape() {
+        return null;
+    }
+
+
+
 }

@@ -27,6 +27,7 @@ import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
 
+import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,6 +64,7 @@ public class mainViewController {
 
     private Group subGroup;
     private Camera camera;
+    private Group SelectedAPItem = new Group();
 
     @FXML
     void initialize() {
@@ -72,24 +74,31 @@ public class mainViewController {
         viewModel.setList(new ArrayList<>());
         // Model on change Listener
         viewModel.addPropertyChangeListener(evt -> {
+
             for (Step3DModel step3DModel1 : viewModel.step3DModels) {
                 for (MeshView shape : step3DModel1.getShapes2DMesh()) {
 
                     //shape.setDrawMode(DrawMode.FILL ); // Rotation not good wenn on
                     shape.setCache(true);
+                    SelectedAPItem.setCache(true);
                     shape.setCacheHint(CacheHint.ROTATE);
+                    SelectedAPItem.setCacheHint(CacheHint.ROTATE);
+                    SelectedAPItem.setTranslateX(150);
+                    SelectedAPItem.setTranslateY(150);
                     shape.setTranslateX(150);
                     shape.setTranslateY(150);
                     shape.setMaterial(new PhongMaterial(Color.CORNFLOWERBLUE));
                     shape.setCullFace(CullFace.BACK);
-
                     shape.getTransforms().add(new Scale(2, 2));
+                    SelectedAPItem.getTransforms().add(new Scale(2, 2));
                     rotateX.setAxis(new Point3D(1, 0, 0));
                     rotateY.setAxis(new Point3D(0, 1, 0));
                     shape.getTransforms().add(rotateX);
+                    SelectedAPItem.getTransforms().add(rotateX);
+                    SelectedAPItem.getTransforms().add(rotateY);
                     shape.getTransforms().add(rotateY);
                     subGroup.getChildren().add(shape);
-
+                    subGroup.getChildren().add(SelectedAPItem);
                     TreeItem<StepShapes> treeItem = new TreeItem<>(new StepText("Project"));
                     treeItem.getChildren().add(step3DModel1.getStepShapes());
                     treeView.setCache(true);
@@ -124,12 +133,19 @@ public class mainViewController {
                         }
                     }
                 }
+                if (treeItem.getValue().getShape() != null){
+                    SelectedAPItem.getChildren().clear();
+                    SelectedAPItem.getChildren().add(treeItem.getValue().getShape());
+                }else {
+                    SelectedAPItem.getChildren().clear();
+                }
             }
             viewModel.setList(text);
         }
     }
     @FXML
     private void selectAFile() throws IOException {
+        closeFile();
         step3DModel = new Step3DModel("");
         if (stage == null) {
             logger.log(Level.WARNING, "stage null");
@@ -143,6 +159,14 @@ public class mainViewController {
             step3DModel.setName(fileHandler.getFileName());
         }
         viewModel.addStepModel(step3DModel);
+
+    }
+    @FXML
+    void closeFile() {
+        SelectedAPItem.getChildren().clear();
+        subGroup.getChildren().clear();
+        viewModel.clearStepModel();
+        treeView.setRoot(null);
 
     }
 

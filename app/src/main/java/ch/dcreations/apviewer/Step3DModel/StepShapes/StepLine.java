@@ -2,6 +2,8 @@ package ch.dcreations.apviewer.Step3DModel.StepShapes;
 
 
 import javafx.scene.control.TreeItem;
+import javafx.scene.shape.Shape3D;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -47,5 +49,11 @@ public class StepLine implements StepShapes {
     @Override
     public boolean setPreference(Map<String, String> preference) {
         return false;
+    }
+
+
+    @Override
+    public Shape3D getShape() {
+        return null;
     }
 }

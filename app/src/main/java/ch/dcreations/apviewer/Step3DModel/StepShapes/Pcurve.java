@@ -2,6 +2,7 @@ package ch.dcreations.apviewer.Step3DModel.StepShapes;
 
 
 import javafx.scene.control.TreeItem;
+import javafx.scene.shape.Shape3D;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,5 +49,11 @@ public class Pcurve implements StepShapes {
     @Override
     public boolean setPreference(Map<String, String> preference) {
         return false;
+    }
+
+
+    @Override
+    public Shape3D getShape() {
+        return null;
     }
 }

@@ -5,6 +5,7 @@ import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.Edge.Edge;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Point.CartesianPoint;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.StepShapes;
 import javafx.scene.control.TreeItem;
+import javafx.scene.shape.Shape3D;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -130,5 +131,11 @@ public class FaceBound implements StepShapes {
     @Override
     public boolean setPreference(Map<String, String> preference) {
         return false;
+    }
+
+
+    @Override
+    public Shape3D getShape() {
+        return null;
     }
 }

@@ -23,7 +23,8 @@ import java.util.*;
 
 public class AP242Decoder {
     Map<Integer, String> dataMap;
-    List<ClosedShell> shells = new ArrayList<>();
+    List<StepShapes> stepShapes = new ArrayList<>();
+    List<ClosedShell> drawingShells = new ArrayList<>();
 
     public AP242Decoder(Map<Integer, String> dataMap) {
         this.dataMap = dataMap;
@@ -58,7 +59,9 @@ public class AP242Decoder {
             case "SHAPE_DEFINITION_REPRESENTATION" -> {
                 String code1 = dataMap.get(Integer.valueOf(numbers[0].replace("#", "")));
                 String code2 = dataMap.get(Integer.valueOf(numbers[1].replace("#", "")));
-                return new ShapeDefinitionRepesentation(calculateDecoding(code1), calculateDecoding(code2));
+                ShapeDefinitionRepesentation s = new ShapeDefinitionRepesentation(calculateDecoding(code1), calculateDecoding(code2));
+                stepShapes.add(s);
+                return s;
             }
             case "ADVANCED_BREP_SHAPE_REPRESENTATION" -> {
                 String code1 = dataMap.get(Integer.valueOf(numbers[numbers.length - 1].replace("#", "")));
@@ -133,8 +136,9 @@ public class AP242Decoder {
             case "CLOSED_SHELL" -> {
                 try {
                     Set<Face> setOfFaces = getFacesSet(numbers);
-                    shells.add(new ClosedShell(name,setOfFaces));
-                    return new ClosedShell(name, setOfFaces);
+                    ClosedShell closedShell = new ClosedShell(name, setOfFaces);
+                    drawingShells.add(closedShell);
+                    return closedShell;
                 }catch (Exception e) {
                     System.err.println("CLOSED_SHELL ERROR");
                     System.err.println(e.getMessage());
@@ -321,7 +325,11 @@ public class AP242Decoder {
     }
 
 
-    public List<ClosedShell> getShells() {
-        return shells;
+    public List<ClosedShell> getDrawingShells() {
+        return drawingShells;
+    }
+
+    public List<StepShapes> getStepShapes() {
+        return stepShapes;
     }
 }

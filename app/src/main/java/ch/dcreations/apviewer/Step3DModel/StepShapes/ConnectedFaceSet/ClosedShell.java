@@ -6,15 +6,11 @@ import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.FaceBound;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Point.CartasianAxisE;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Point.CartesianPoint;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.StepShapes;
-import com.sun.javafx.collections.ObservableFloatArrayImpl;
-import com.sun.javafx.collections.ObservableIntegerArrayImpl;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableFloatArray;
 import javafx.collections.ObservableIntegerArray;
 import javafx.scene.control.TreeItem;
-import javafx.scene.shape.Mesh;
-import javafx.scene.shape.TriangleMesh;
-import javafx.scene.shape.VertexFormat;
+import javafx.scene.shape.*;
 
 import java.util.*;
 
@@ -101,6 +97,11 @@ public class ClosedShell extends ConnectedFaceSet implements StepShapes {
     @Override
     public boolean setPreference(Map<String, String> preference) {
         return false;
+    }
+
+    @Override
+    public Shape3D getShape() {
+        return new MeshView(mesh);
     }
 
     @Override

@@ -3,6 +3,7 @@ package ch.dcreations.apviewer.Step3DModel.StepShapes.Surfaces;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.AP242Code;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Axis2Placement3D;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.StepShapes;
+import javafx.scene.shape.Shape3D;
 
 import java.util.Collections;
 import java.util.List;
@@ -30,5 +31,11 @@ public class ElementarySurface extends Surface implements StepShapes {
     @Override
     public boolean setPreference(Map<String, String> preference) {
         return false;
+    }
+
+
+    @Override
+    public Shape3D getShape() {
+        return null;
     }
 }
