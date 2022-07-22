@@ -10,12 +10,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class EdgeLoop extends Loop implements StepShapes {
+public class EdgeLoop extends Loop {
 
     Set<Edge> orientedEdges;
 
-    public EdgeLoop(String name, Set<Edge> orientedEdges) {
-        super(name);
+    public EdgeLoop(String name, Set<Edge> orientedEdges,int lineNumber) {
+        super(name,lineNumber,AP242Code.EDGE_LOOP);
         this.orientedEdges = orientedEdges;
     }
 

@@ -4,18 +4,18 @@ import ch.dcreations.apviewer.Step3DModel.StepShapes.AP242Code;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Face.Face;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.StepShapes;
 import javafx.scene.control.TreeItem;
-import javafx.scene.shape.MeshView;
-import javafx.scene.shape.Shape3D;
 
 import java.util.*;
 
-abstract class ConnectedFaceSet implements StepShapes {
+abstract class ConnectedFaceSet extends StepShapes {
 
-    protected final List<Map<String, String>> preferencesMapList = new ArrayList<>();
-
-    protected String name ;
     protected Set<Face> setOfFaces;
-    public ConnectedFaceSet(String name, Set<Face> setOfFaces) {
+    public ConnectedFaceSet(String name, Set<Face> setOfFaces,int lineNumber) {
+        this(name,setOfFaces,lineNumber,AP242Code.CONNECTED_FACE_SET);
+    }
+
+    public ConnectedFaceSet(String name, Set<Face> setOfFaces,int lineNumber,AP242Code ap242Code) {
+        super(ap242Code,name,lineNumber);
         this.name = name;
         this.setOfFaces = setOfFaces;
     }
@@ -24,10 +24,6 @@ abstract class ConnectedFaceSet implements StepShapes {
         return Set.copyOf(setOfFaces);
     }
 
-    @Override
-    public AP242Code getTyp() {
-        return AP242Code.CONNECTED_FACE_SET;
-    }
 
     @Override
     public TreeItem<StepShapes> getTreeItem() {
@@ -36,24 +32,5 @@ abstract class ConnectedFaceSet implements StepShapes {
             treeItem.getChildren().add(face.getTreeItem());
         }
         return treeItem;
-    }
-    @Override
-    public String toString() {
-        return AP242Code.CONNECTED_FACE_SET.toString() + " "+ name;
-    }
-
-    @Override
-    public List<Map<String, String>> getPreferencesList() {
-        return Collections.unmodifiableList(this.preferencesMapList);
-    }
-
-    @Override
-    public boolean setPreference(Map<String, String> preference) {
-        return false;
-    }
-
-    @Override
-    public Shape3D getShape() {
-        return null;
     }
 }

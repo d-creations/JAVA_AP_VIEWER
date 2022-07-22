@@ -8,20 +8,14 @@ import javafx.scene.control.TreeItem;
 
 import java.util.*;
 
-public class AdvancedFace extends FaceSurface implements StepShapes {
+public class AdvancedFace extends FaceSurface {
 
-    public AdvancedFace(String name, Set<FaceBound> setOfFaces, Surface faceGeometrie, Boolean sameSense) {
-        super(name, setOfFaces, faceGeometrie, sameSense);
+    public AdvancedFace(String name, Set<FaceBound> setOfFaces, Surface faceGeometrie, Boolean sameSense,int lineNumber) {
+        super(name, setOfFaces, faceGeometrie, sameSense,lineNumber,AP242Code.ADVANCED_FACE);
         Map<String,String> preferencesMap = new HashMap<>();
         preferencesMap.put("Same Sense",sameSense.toString());
         preferencesMapList.add(preferencesMap);
     }
-
-    @Override
-    public AP242Code getTyp() {
-        return AP242Code.ADVANCED_FACE;
-    }
-
     @Override
     public TreeItem<StepShapes> getTreeItem() {
         TreeItem<StepShapes> treeItem = new TreeItem<>(this);
@@ -30,19 +24,5 @@ public class AdvancedFace extends FaceSurface implements StepShapes {
         }
         treeItem.getChildren().add(faceGeometrie.getTreeItem());
         return treeItem;
-    }
-    @Override
-    public String toString() {
-        return AP242Code.ADVANCED_FACE + "" + name;
-    }
-
-    @Override
-    public List<Map<String, String>> getPreferencesList() {
-        return Collections.unmodifiableList(this.preferencesMapList);
-    }
-
-    @Override
-    public boolean setPreference(Map<String, String> preference) {
-        return false;
     }
 }

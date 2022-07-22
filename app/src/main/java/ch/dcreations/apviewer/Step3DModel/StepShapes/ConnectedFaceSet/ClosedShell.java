@@ -14,17 +14,13 @@ import javafx.scene.shape.*;
 
 import java.util.*;
 
-public class ClosedShell extends ConnectedFaceSet implements StepShapes {
+public class ClosedShell extends ConnectedFaceSet {
 
-    public ClosedShell(String name, Set<Face> setOfFaces) {
-        super(name,setOfFaces);
+    public ClosedShell(String name, Set<Face> setOfFaces,int lineNumber) {
+        super(name,setOfFaces,lineNumber,AP242Code.CLOSED_SHELL);
         this.mesh = createMesh(setOfFaces);
       }
 
-    @Override
-    public AP242Code getTyp() {
-        return AP242Code.CLOSED_SHELL;
-    }
 
 
     private Mesh mesh;
@@ -90,23 +86,8 @@ public class ClosedShell extends ConnectedFaceSet implements StepShapes {
     }
 
     @Override
-    public List<Map<String, String>> getPreferencesList() {
-        return  Collections.unmodifiableList(this.preferencesMapList);
-    }
-
-    @Override
-    public boolean setPreference(Map<String, String> preference) {
-        return false;
-    }
-
-    @Override
     public Shape3D getShape() {
         return new MeshView(mesh);
-    }
-
-    @Override
-    public String toString() {
-        return AP242Code.CLOSED_SHELL + " "+ name;
     }
 
 
