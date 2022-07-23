@@ -1,23 +1,18 @@
 package ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.Edge;
 
 import ch.dcreations.apviewer.Step3DModel.StepShapes.AP242Code;
-import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.FaceBound;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.StepShapes;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Vertex.Vertex;
 import javafx.scene.control.TreeItem;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
-public class OrientedEdge extends Edge implements StepShapes {
+public class OrientedEdge extends Edge {
 
     protected Edge edgeElement;
     protected Boolean orientation;
 
-    public OrientedEdge(String name, Vertex edgeStart, Vertex edgeEnd, Edge edgeElement, Boolean orientation) {
-        super(name,edgeElement.getEdgeStart(),edgeElement.getEdgeEnd());
+    public OrientedEdge(String name, Vertex edgeStart, Vertex edgeEnd, Edge edgeElement, Boolean orientation,int lineNumber) {
+        super(name,edgeElement.getEdgeStart(),edgeElement.getEdgeEnd(),lineNumber,AP242Code.ORIENTED_EDGE);
         this.edgeElement = edgeElement;
         this.orientation = orientation;
         calculateEdge();
@@ -31,30 +26,10 @@ public class OrientedEdge extends Edge implements StepShapes {
             edgeEnd = edgeElement.getEdgeEnd();
         }
     }
-
-    @Override
-    public AP242Code getTyp() {
-        return AP242Code.ORIENTED_EDGE;
-    }
-
-    @Override
-    public String toString() {
-        return AP242Code.ORIENTED_EDGE + " " + name;
-    }
     @Override
     public TreeItem<StepShapes> getTreeItem() {
         TreeItem<StepShapes> treeItem = new TreeItem<>(this);
         treeItem.getChildren().add(edgeElement.getTreeItem());
         return treeItem;
-    }
-
-    @Override
-    public List<Map<String, String>> getPreferencesList() {
-        return Collections.unmodifiableList(this.preferencesMapList);
-    }
-
-    @Override
-    public boolean setPreference(Map<String, String> preference) {
-        return false;
     }
 }

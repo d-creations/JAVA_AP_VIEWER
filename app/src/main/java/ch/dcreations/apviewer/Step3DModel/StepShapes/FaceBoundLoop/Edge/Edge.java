@@ -7,26 +7,30 @@ import ch.dcreations.apviewer.Step3DModel.StepShapes.StepShapes;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Vertex.Vertex;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Vertex.VertexPoint;
 import javafx.scene.control.TreeItem;
-import javafx.scene.shape.Shape3D;
-import javafx.scene.shape.Sphere;
 
 import java.util.*;
 
-public class Edge implements StepShapes {
-    protected String name;
+public class Edge extends StepShapes {
     protected Vertex edgeStart;
     protected Vertex edgeEnd;
 
     protected final List<Map<String, String>> preferencesMapList = new ArrayList<>();
-
     protected double startX;
     protected double startY;
     protected double startZ;
     protected double endX;
     protected double endY;
     protected double endZ;
+    public Edge(String name, Vertex edgeStart, Vertex edgeEnd,int lineNumber){
+        this(name,edgeStart,edgeEnd,lineNumber,AP242Code.EDGE);
+    }
 
-    public Edge(String name, Vertex edgeStart, Vertex edgeEnd) {
+    public Edge(String name, VertexPoint edgeStart, VertexPoint edgeEnd,int lineNumber) {
+        this(name,edgeStart,edgeEnd,lineNumber,AP242Code.EDGE);
+    }
+
+    public Edge(String name, Vertex edgeStart, Vertex edgeEnd,int lineNumber,AP242Code ap242Code) {
+        super(ap242Code,name,lineNumber);
         this.name = name;
         this.edgeStart = edgeStart;
         this.edgeEnd = edgeEnd;
@@ -55,7 +59,8 @@ public class Edge implements StepShapes {
         preferencesMapList.add(preferencesMap);
     }
 
-    public Edge(String name, VertexPoint edgeStart, VertexPoint edgeEnd) {
+    public Edge(String name, VertexPoint edgeStart, VertexPoint edgeEnd,int lineNumber,AP242Code ap242Code) {
+        super(ap242Code,name,lineNumber);
         this.name = name;
         this.edgeStart = edgeStart;
         this.edgeEnd = edgeEnd;
@@ -138,25 +143,5 @@ public class Edge implements StepShapes {
         treeItem.getChildren().add(edgeStart.getTreeItem());
         treeItem.getChildren().add(edgeEnd.getTreeItem());
         return treeItem;
-    }
-
-    @Override
-    public String toString() {
-        return AP242Code.EDGE + " " + name;
-    }
-
-    @Override
-    public List<Map<String, String>> getPreferencesList() {
-        return Collections.unmodifiableList(this.preferencesMapList);
-    }
-
-    @Override
-    public boolean setPreference(Map<String, String> preference) {
-        return false;
-    }
-
-    @Override
-    public Shape3D getShape() {
-       return null;
     }
 }

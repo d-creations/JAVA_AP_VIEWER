@@ -1,6 +1,7 @@
 package ch.dcreations.apviewer.Step3DModel.StepShapes.ConnectedFaceSet;
 
 import ch.dcreations.apviewer.Step3DModel.StepShapes.AP242Code;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.Face.AdvancedFace;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Face.Face;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.FaceBound;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Point.CartasianAxisE;
@@ -14,17 +15,13 @@ import javafx.scene.shape.*;
 
 import java.util.*;
 
-public class ClosedShell extends ConnectedFaceSet implements StepShapes {
+public class ClosedShell extends ConnectedFaceSet {
 
-    public ClosedShell(String name, Set<Face> setOfFaces) {
-        super(name,setOfFaces);
+    public ClosedShell(String name, Set<Face> setOfFaces,int lineNumber) {
+        super(name,setOfFaces,lineNumber,AP242Code.CLOSED_SHELL);
         this.mesh = createMesh(setOfFaces);
       }
 
-    @Override
-    public AP242Code getTyp() {
-        return AP242Code.CLOSED_SHELL;
-    }
 
 
     private Mesh mesh;
@@ -35,8 +32,7 @@ public class ClosedShell extends ConnectedFaceSet implements StepShapes {
         ObservableIntegerArray facesArray = FXCollections.observableIntegerArray();
         List<Double> axis = new ArrayList<>();
         for (Face stepDrawFace : setOfFaces) {
-            for (FaceBound faceBound : stepDrawFace.getFaceBound()) {
-                for (CartesianPoint stepDrawLine : faceBound.getStepDrawTriangleLines()){
+                for (CartesianPoint stepDrawLine : stepDrawFace.getStepDrawTriangleLines()){
                     for (int i = 0; i < 1; i++) {
                         Double x1 = stepDrawLine.getPoint().get(CartasianAxisE.X);
                         Double y1 = stepDrawLine.getPoint().get(CartasianAxisE.Y);
@@ -45,7 +41,6 @@ public class ClosedShell extends ConnectedFaceSet implements StepShapes {
                         axis.add(y1);
                         axis.add(z1);
                     }
-                }
             }
         }
         int i=0;
@@ -90,23 +85,8 @@ public class ClosedShell extends ConnectedFaceSet implements StepShapes {
     }
 
     @Override
-    public List<Map<String, String>> getPreferencesList() {
-        return  Collections.unmodifiableList(this.preferencesMapList);
-    }
-
-    @Override
-    public boolean setPreference(Map<String, String> preference) {
-        return false;
-    }
-
-    @Override
     public Shape3D getShape() {
         return new MeshView(mesh);
-    }
-
-    @Override
-    public String toString() {
-        return AP242Code.CLOSED_SHELL + " "+ name;
     }
 
 

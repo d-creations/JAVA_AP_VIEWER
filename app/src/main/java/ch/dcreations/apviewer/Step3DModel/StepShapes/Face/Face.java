@@ -2,25 +2,31 @@ package ch.dcreations.apviewer.Step3DModel.StepShapes.Face;
 
 import ch.dcreations.apviewer.Step3DModel.StepShapes.AP242Code;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.FaceBound;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.Point.CartesianPoint;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.StepShapes;
 import javafx.scene.control.TreeItem;
-import javafx.scene.shape.Shape3D;
 
 import java.util.*;
 
-public abstract class Face implements StepShapes {
-    protected String name;
+public abstract class Face extends StepShapes {
    protected Set<FaceBound> FaceBound;
+  protected List<CartesianPoint> stepDrawLinesForTriangle = new ArrayList<>();
 
-   protected final List<Map<String, String>> preferencesMapList = new ArrayList<>();
 
 
-    public Face(String name, Set<FaceBound> faceBounds) {
-        this.name = name;
+
+    public Face(String name, Set<FaceBound> faceBounds,int lineNumber) {
+        super(AP242Code.FACE_BOUND,name,lineNumber);
         this.FaceBound = faceBounds;
     }
 
-    public Set<FaceBound> getFaceBound() {
+
+    public Face(String name, Set<FaceBound> faceBounds,int lineNumber,AP242Code ap242Code) {
+        super(ap242Code,name,lineNumber);
+        this.FaceBound = faceBounds;
+    }
+
+    protected Set<FaceBound> getFaceBound() {
         return Set.copyOf(FaceBound);
     }
 
@@ -33,24 +39,7 @@ public abstract class Face implements StepShapes {
         return treeItem;
     }
 
-    @Override
-    public String toString() {
-        return AP242Code.FACE.toString() + "name";
-    }
-
-    @Override
-    public List<Map<String, String>> getPreferencesList() {
-        return Collections.unmodifiableList(this.preferencesMapList);
-    }
-
-    @Override
-    public boolean setPreference(Map<String, String> preference) {
-        return false;
-    }
-
-
-    @Override
-    public Shape3D getShape() {
-        return null;
+    public List<CartesianPoint> getStepDrawTriangleLines() {
+        return stepDrawLinesForTriangle;
     }
 }

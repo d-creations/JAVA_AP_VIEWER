@@ -8,13 +8,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class StepText implements StepShapes{
-    protected final List<Map<String, String>> preferencesMapList = new ArrayList<>();
+public class StepText extends StepShapes{
 
-    protected String name ;
 
     public StepText(String name) {
-        this.name = name;
+        super(AP242Code.STEP_TEXT,name,0);
     }
 
     @Override
@@ -22,31 +20,9 @@ public class StepText implements StepShapes{
         return AP242Code.STEP_TEXT;
     }
 
-
-    @Override
-    public TreeItem<StepShapes> getTreeItem() {
-        TreeItem<StepShapes> treeItem = new TreeItem<>(this);
-        return treeItem;
-    }
-
     @Override
     public String toString() {
         return name;
     }
 
-    @Override
-    public List<Map<String, String>> getPreferencesList() {
-        return Collections.unmodifiableList(this.preferencesMapList);
-    }
-
-    @Override
-    public boolean setPreference(Map<String, String> preference) {
-        return false;
-    }
-
-
-    @Override
-    public Shape3D getShape() {
-        return null;
-    }
 }

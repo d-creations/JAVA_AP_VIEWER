@@ -1,27 +1,17 @@
 package ch.dcreations.apviewer.Step3DModel.StepShapes;
 
 import javafx.scene.control.TreeItem;
-import javafx.scene.shape.Shape3D;
 
 import java.util.*;
 
-public class AdvancedBrepShapeRepresentation implements  StepShapes{
-
-    protected final List<Map<String, String>> preferencesMapList = new ArrayList<>();
-
-    protected String name ;
+public class AdvancedBrepShapeRepresentation extends   StepShapes{
     protected Set<StepShapes> items;
     protected StepShapes context;
 
-    public AdvancedBrepShapeRepresentation(String name, Set<StepShapes> items, StepShapes context) {
-        this.name = name;
+    public AdvancedBrepShapeRepresentation(String name, Set<StepShapes> items, StepShapes context,int lineNumber) {
+        super(AP242Code.ADVANCED_BREP_SHAPE_REPRESENTATION,name,lineNumber);
         this.items = items;
         this.context = context;
-    }
-
-    @Override
-    public AP242Code getTyp() {
-        return AP242Code.ADVANCED_BREP_SHAPE_REPRESENTATION;
     }
 
     @Override
@@ -32,25 +22,4 @@ public class AdvancedBrepShapeRepresentation implements  StepShapes{
         }
         return treeItem;
     }
-    @Override
-    public String toString() {
-        return AP242Code.ADVANCED_BREP_SHAPE_REPRESENTATION + " " + name;
-    }
-
-    @Override
-    public List<Map<String, String>> getPreferencesList() {
-        return Collections.unmodifiableList(this.preferencesMapList);
-    }
-
-    @Override
-    public boolean setPreference(Map<String, String> preference) {
-        return false;
-    }
-
-
-    @Override
-    public Shape3D getShape() {
-        return null;
-    }
-
 }
