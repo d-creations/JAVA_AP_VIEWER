@@ -2,6 +2,7 @@ package ch.dcreations.apviewer.Step3DModel.StepShapes.Face;
 
 import ch.dcreations.apviewer.Step3DModel.StepShapes.AP242Code;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.FaceBound;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.Point.CartesianPoint;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.StepShapes;
 import javafx.scene.control.TreeItem;
 
@@ -9,6 +10,9 @@ import java.util.*;
 
 public abstract class Face extends StepShapes {
    protected Set<FaceBound> FaceBound;
+  protected List<CartesianPoint> stepDrawLinesForTriangle = new ArrayList<>();
+
+
 
 
     public Face(String name, Set<FaceBound> faceBounds,int lineNumber) {
@@ -22,7 +26,7 @@ public abstract class Face extends StepShapes {
         this.FaceBound = faceBounds;
     }
 
-    public Set<FaceBound> getFaceBound() {
+    protected Set<FaceBound> getFaceBound() {
         return Set.copyOf(FaceBound);
     }
 
@@ -33,5 +37,9 @@ public abstract class Face extends StepShapes {
             treeItem.getChildren().add(faceBound.getTreeItem());
         }
         return treeItem;
+    }
+
+    public List<CartesianPoint> getStepDrawTriangleLines() {
+        return stepDrawLinesForTriangle;
     }
 }

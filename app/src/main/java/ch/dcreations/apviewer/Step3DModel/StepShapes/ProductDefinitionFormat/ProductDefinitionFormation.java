@@ -1,6 +1,8 @@
-package ch.dcreations.apviewer.Step3DModel.StepShapes;
+package ch.dcreations.apviewer.Step3DModel.StepShapes.ProductDefinitionFormat;
 
 
+import ch.dcreations.apviewer.Step3DModel.StepShapes.AP242Code;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.StepShapes;
 import javafx.scene.control.TreeItem;
 
 public class ProductDefinitionFormation extends StepShapes {
@@ -10,6 +12,10 @@ public class ProductDefinitionFormation extends StepShapes {
     protected StepShapes productReference;
 
     public ProductDefinitionFormation(String id, String description, StepShapes productReference,int lineNumber) {
+        this(id,description,productReference,lineNumber,AP242Code.PRODUCT_DEFINITION_FORMATION);
+    }
+
+    public ProductDefinitionFormation(String id, String description, StepShapes productReference,int lineNumber,AP242Code ap242Code) {
         super(AP242Code.PRODUCT_DEFINITION_FORMATION,"",lineNumber);
         this.id = id;
         this.description = description;

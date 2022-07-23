@@ -2,6 +2,7 @@ package ch.dcreations.apviewer.Step3DModel;
 
 import ch.dcreations.apviewer.Step3DModel.StepShapes.*;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.ConnectedFaceSet.ClosedShell;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.Curve.Conic.Circle;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Curve.Curve;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Curve.SurfaceCurve;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.Edge.Edge;
@@ -11,9 +12,13 @@ import ch.dcreations.apviewer.Step3DModel.StepShapes.Face.AdvancedFace;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Face.Face;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.EdgeLoop;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.FaceBound;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.FaceOuterBound;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Point.CartesianPoint;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Point.Point;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.ProductDefinitionFormat.ProductDefinitionFormation;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.ProductDefinitionFormat.ProductDefinitionFormationWithSpecifiedSource;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Surfaces.Plane;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.Surfaces.SphericalSurface;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Surfaces.Surface;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Vertex.SimpleVertexD;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Vertex.Vertex;
@@ -106,6 +111,13 @@ public class AP242Decoder {
                 String code1 = dataMap.get(code1LineNumber);
                 return new ProductDefinitionFormation(name, description, calculateDecoding(code1,code1LineNumber),lineNumber);
             }
+            case "PRODUCT_DEFINITION_FORMATION_WITH_SPECIFIED_SOURCE" -> {
+                String description = numbers[1];
+                int code1LineNumber = Integer.valueOf(numbers[2].replace("#", ""));
+                String source = numbers[3];
+                String code1 = dataMap.get(code1LineNumber);
+                return new ProductDefinitionFormationWithSpecifiedSource(name, description, calculateDecoding(code1,code1LineNumber),source,lineNumber);
+            }
             case "PRODUCT_DEFINITION_CONTEXT" -> {
                 String disciplineType = numbers[2];
                 int code1LineNumber = Integer.valueOf(numbers[1].replace("#", ""));
@@ -180,6 +192,19 @@ public class AP242Decoder {
                     return new FaceBound(name, faceLoop, orientation,lineNumber);
                 } catch (Exception e) {
                     System.err.println("FaceBound failed");
+                    System.err.println(e.getMessage());
+                    return null;
+                }
+            }
+            case "FACE_OUTER_BOUND" -> {
+                try {
+                    int codeNumber = Integer.valueOf(numbers[1].replace("#", ""));
+                    String code = dataMap.get(codeNumber);
+                    EdgeLoop faceLoop = (EdgeLoop)calculateDecoding(code,codeNumber);
+                    Boolean orientation = !Objects.equals(numbers[numbers.length - 1], ".F.");
+                    return new FaceOuterBound(name, faceLoop, orientation,lineNumber);
+                } catch (Exception e) {
+                    System.err.println("FaceOuterBound failed");
                     System.err.println(e.getMessage());
                     return null;
                 }
@@ -270,6 +295,34 @@ public class AP242Decoder {
                     return null;
                 }
             }
+            case "SPHERICAL_SURFACE" -> {
+                int PositionCodeLineNumber = Integer.valueOf(numbers[1].replace("#", ""));
+                double radius = Double.valueOf(numbers[2].replace("#", ""));
+                String PositionCode = dataMap.get(PositionCodeLineNumber);
+                try {
+                    Axis2Placement3D position = (Axis2Placement3D) calculateDecoding(PositionCode,PositionCodeLineNumber);//vertex
+                    return new SphericalSurface(name, position,radius,lineNumber);
+                } catch (Exception e) {
+                    System.err.println("SPHERICAL SURFACE CUNSTRUCTION FAILD Construction Failed");
+                    System.err.println(e.getMessage());
+                    return null;
+                }
+            }
+
+            case "CIRCLE" -> {
+                int PositionCodeLineNumber = Integer.valueOf(numbers[1].replace("#", ""));
+                double radius = Double.valueOf(numbers[2].replace("#", ""));
+                String PositionCode = dataMap.get(PositionCodeLineNumber);
+                try {
+                    Axis2Placement3D position = (Axis2Placement3D) calculateDecoding(PositionCode,PositionCodeLineNumber);//vertex
+                    return new Circle(name, position,radius,lineNumber);
+                } catch (Exception e) {
+                    System.err.println("CIRCLE Construction Failed");
+                    System.err.println(e.getMessage());
+                    return null;
+                }
+            }
+
             case "PCURVE" -> {
                 int codeLineNumber = Integer.valueOf(numbers[1].replace("#", ""));
                 String code = dataMap.get(codeLineNumber);
@@ -326,7 +379,7 @@ public class AP242Decoder {
         for (int i = 1; i < numbers.length - 2; i++) {
             int codeLineNumber = Integer.valueOf(numbers[i].replace("#", "").replace("(", "").replace(")", ""));
             String code = dataMap.get(codeLineNumber);
-            if (obj.equals(calculateDecoding(code,codeLineNumber).getClass())) {
+            if (true) {
                 items.add((T) calculateDecoding(code,codeLineNumber));
             } else {
                 System.err.println("Get ITMENSSET");

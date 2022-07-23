@@ -1,6 +1,7 @@
 package ch.dcreations.apviewer.Step3DModel.StepShapes.ConnectedFaceSet;
 
 import ch.dcreations.apviewer.Step3DModel.StepShapes.AP242Code;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.Face.AdvancedFace;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Face.Face;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.FaceBound;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Point.CartasianAxisE;
@@ -31,8 +32,7 @@ public class ClosedShell extends ConnectedFaceSet {
         ObservableIntegerArray facesArray = FXCollections.observableIntegerArray();
         List<Double> axis = new ArrayList<>();
         for (Face stepDrawFace : setOfFaces) {
-            for (FaceBound faceBound : stepDrawFace.getFaceBound()) {
-                for (CartesianPoint stepDrawLine : faceBound.getStepDrawTriangleLines()){
+                for (CartesianPoint stepDrawLine : stepDrawFace.getStepDrawTriangleLines()){
                     for (int i = 0; i < 1; i++) {
                         Double x1 = stepDrawLine.getPoint().get(CartasianAxisE.X);
                         Double y1 = stepDrawLine.getPoint().get(CartasianAxisE.Y);
@@ -41,7 +41,6 @@ public class ClosedShell extends ConnectedFaceSet {
                         axis.add(y1);
                         axis.add(z1);
                     }
-                }
             }
         }
         int i=0;
