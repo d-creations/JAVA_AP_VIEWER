@@ -31,6 +31,83 @@ public class AdvancedFace extends FaceSurface {
 
     private void renderSphericalSurface(double radius) {
 
+        // Separate the Spherical in spherical layers Sektor    // h = höhe der Halbkugel  = a katete  r = hypotenuse
+        int countLayers = 30; // Half Spherical needs to be uneven
+        int countTrianglePerLayer = 51;
+        double hLayer = radius / countLayers;
+
+        //for each Layer calculate circumference
+        for(int k = 1 ; k > -2 ; k -= 2){
+        for (int i = 0; i < countLayers; i++) {
+            double distenceFromSphericalTop = (hLayer * i);
+            double aCatate = radius - distenceFromSphericalTop;
+            double layerRadiusUP = Math.sqrt(radius * radius - aCatate * aCatate);
+            double distenceFromSphericalTopDown = (hLayer * (i + 1));
+            double aCathetusADown = radius - distenceFromSphericalTopDown;
+            double layerRadiusDown = Math.sqrt(radius * radius - aCathetusADown * aCathetusADown);
+            for (int y = 0; y < countTrianglePerLayer; y++) {
+                double layerCircumferenceSequenzUP = (2 * Math.PI * layerRadiusUP) / countTrianglePerLayer;////////////////A     D
+                double layerCircumferenceSequenzDown = (2 * Math.PI * layerRadiusDown) / countTrianglePerLayer;///////// B   C
+
+                double pointA = (layerCircumferenceSequenzUP / 2) * (i % 2) + y * layerCircumferenceSequenzUP;
+                double pointD = (layerCircumferenceSequenzUP / 2) * (i % 2) + (y + 1) * layerCircumferenceSequenzUP;
+                double pointB = -(layerCircumferenceSequenzDown / 2) * ((i + 1) % 2) + layerCircumferenceSequenzDown * y;
+                double pointC = -(layerCircumferenceSequenzDown / 2) * ((i + 1) % 2) + layerCircumferenceSequenzDown * (y + 1);
+                // Calculate Coordinates
+                // Point A
+                double z1 = aCatate*k;
+                double z4 = aCatate*k;
+                double z2 = aCathetusADown*k;
+                double z3 = aCathetusADown*k;
+                double angleBPointA = layerRadiusUP == 0 ? 0 : ((360 / (2 * Math.PI * layerRadiusUP)) * pointA);
+                double angleBPointD = layerRadiusUP == 0 ? 0 : ((360 / (2 * Math.PI * layerRadiusUP)) * pointD);
+                double angleBPointB = layerRadiusDown == 0 ? 0 : ((360 / (2 * Math.PI * layerRadiusDown)) * pointB);
+                double angleBPointC = layerRadiusDown == 0 ? 0 : ((360 / (2 * Math.PI * layerRadiusDown)) * pointC);
+
+                //Tranformation X Y
+                double x1 = layerRadiusUP * (-Math.sin(Math.toRadians(angleBPointA)));
+                double y1 = layerRadiusUP * (Math.cos(Math.toRadians(angleBPointA)));
+                double x4 = layerRadiusUP * (-Math.sin(Math.toRadians(angleBPointD)));
+                double y4 = layerRadiusUP * (Math.cos(Math.toRadians(angleBPointD)));
+                double x2 = layerRadiusDown * (-Math.sin(Math.toRadians(angleBPointB)));
+                double y2 = layerRadiusDown * (Math.cos(Math.toRadians(angleBPointB)));
+                double x3 = layerRadiusDown * (-Math.sin(Math.toRadians(angleBPointC)));
+                double y3 = layerRadiusDown * (Math.cos(Math.toRadians(angleBPointC)));
+                // Triangle 1
+
+                this.stepDrawLinesForTriangle.add(getCartesianPoint(x1, y1, z1));//p1   1
+                this.stepDrawLinesForTriangle.add(getCartesianPoint(x2, y2, z2));//p2
+                this.stepDrawLinesForTriangle.add(getCartesianPoint(x3, y3, z3));//p3
+
+                this.stepDrawLinesForTriangle.add(getCartesianPoint(x2, y2, z2));//p2    2
+                this.stepDrawLinesForTriangle.add(getCartesianPoint(x3, y3, z3));//p3
+                this.stepDrawLinesForTriangle.add(getCartesianPoint(x1, y1, z1));//p1
+
+                this.stepDrawLinesForTriangle.add(getCartesianPoint(x3, y3, z3));//p3
+                this.stepDrawLinesForTriangle.add(getCartesianPoint(x2, y2, z2));//p2
+                this.stepDrawLinesForTriangle.add(getCartesianPoint(x1, y1, z1));//p1  //
+
+
+                // DRIANGE OPOSITE D B A
+                this.stepDrawLinesForTriangle.add(getCartesianPoint(x3, y3, z3));//p3
+                this.stepDrawLinesForTriangle.add(getCartesianPoint(x1, y1, z1));//p1
+                this.stepDrawLinesForTriangle.add(getCartesianPoint(x4, y4, z4));//p3
+
+                this.stepDrawLinesForTriangle.add(getCartesianPoint(x1, y1, z1));//p1
+                this.stepDrawLinesForTriangle.add(getCartesianPoint(x4, y4, z4));//p3
+                this.stepDrawLinesForTriangle.add(getCartesianPoint(x3, y3, z3));//p3
+
+                this.stepDrawLinesForTriangle.add(getCartesianPoint(x4, y4, z4));//p3
+                this.stepDrawLinesForTriangle.add(getCartesianPoint(x1, y1, z1));//p1
+                this.stepDrawLinesForTriangle.add(getCartesianPoint(x3, y3, z3));//p3/
+
+
+            }
+        }
+    }
+
+
+
         Double z3 = radius;
         for (int i = 0;i<8;i++ ) {
             Double x1 = radius;
@@ -54,7 +131,7 @@ public class AdvancedFace extends FaceSurface {
             }
 
 
-            this.stepDrawLinesForTriangle.add(getCartesianPoint(x1, y1, z1));//p1   1
+/*            this.stepDrawLinesForTriangle.add(getCartesianPoint(x1, y1, z1));//p1   1
             this.stepDrawLinesForTriangle.add(getCartesianPoint(x2, y2, z2));//p2
             this.stepDrawLinesForTriangle.add(getCartesianPoint(x3, y3, z3));//p3
 
@@ -64,7 +141,7 @@ public class AdvancedFace extends FaceSurface {
 
             this.stepDrawLinesForTriangle.add(getCartesianPoint(x3, y3, z3));//p3
             this.stepDrawLinesForTriangle.add(getCartesianPoint(x2, y2, z2));//p2
-            this.stepDrawLinesForTriangle.add(getCartesianPoint(x1, y1, z1));//p1  //
+            this.stepDrawLinesForTriangle.add(getCartesianPoint(x1, y1, z1));//p1  //*/
         }
     }
 
