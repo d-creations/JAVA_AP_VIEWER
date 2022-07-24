@@ -4,6 +4,7 @@ import ch.dcreations.apviewer.Step3DModel.StepShapes.*;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.ConnectedFaceSet.ClosedShell;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Curve.Conic.Circle;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Curve.Curve;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.Curve.SeamCurve;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Curve.SurfaceCurve;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.Edge.Edge;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.Edge.EdgeCurve;
@@ -17,6 +18,7 @@ import ch.dcreations.apviewer.Step3DModel.StepShapes.Point.CartesianPoint;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Point.Point;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.ProductDefinitionFormat.ProductDefinitionFormation;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.ProductDefinitionFormat.ProductDefinitionFormationWithSpecifiedSource;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.Surfaces.CylindricalSurface;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Surfaces.Plane;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Surfaces.SphericalSurface;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Surfaces.Surface;
@@ -309,6 +311,20 @@ public class AP242Decoder {
                 }
             }
 
+            case "CYLINDRICAL_SURFACE" -> {
+                int PositionCodeLineNumber = Integer.valueOf(numbers[1].replace("#", ""));
+                double radius = Double.valueOf(numbers[2].replace("#", ""));
+                String PositionCode = dataMap.get(PositionCodeLineNumber);
+                try {
+                    Axis2Placement3D position = (Axis2Placement3D) calculateDecoding(PositionCode,PositionCodeLineNumber);//vertex
+                    return new CylindricalSurface(name, position,radius,lineNumber);
+                } catch (Exception e) {
+                    System.err.println("Cylindrical Construction Failed");
+                    System.err.println(e.getMessage());
+                    return null;
+                }
+            }
+
             case "CIRCLE" -> {
                 int PositionCodeLineNumber = Integer.valueOf(numbers[1].replace("#", ""));
                 double radius = Double.valueOf(numbers[2].replace("#", ""));
@@ -321,6 +337,20 @@ public class AP242Decoder {
                     System.err.println(e.getMessage());
                     return null;
                 }
+            }
+
+            case "SEAM_CURVE" ->  {
+                int codeLineNumber = Integer.valueOf(numbers[1].replace("#", ""));
+                String code = dataMap.get(codeLineNumber);
+                StepShapes curve = calculateDecoding(code,codeLineNumber);//vertex
+                Set<StepShapes> items = new HashSet<>();
+                for (int i = 2; i < numbers.length - 1; i++) {
+                    int codeNumber = Integer.valueOf(numbers[i].replace("#", "").replace("(", "").replace(")", ""));
+                    code = dataMap.get(codeNumber);
+                    items.add(calculateDecoding(code,codeNumber));
+                }
+                PreferredSurfaceCurveRepresentation representation = getPreferredEnum(numbers[numbers.length - 1].replace("#", ""));
+                return new SeamCurve(name, curve, items, representation,lineNumber);
             }
 
             case "PCURVE" -> {
