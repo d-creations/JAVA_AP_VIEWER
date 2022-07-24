@@ -6,6 +6,7 @@ import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.Edge.Edge;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.FaceBound;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Point.CartesianPoint;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.StepShapes;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.Surfaces.CylindricalSurface;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Surfaces.SphericalSurface;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Surfaces.Surface;
 import javafx.scene.control.TreeItem;
@@ -28,8 +29,68 @@ public class AdvancedFace extends FaceSurface {
             double radius = sphericalSurface.getRadius();
             renderSphericalSurface(radius);
         }
+        if (faceGeometrie.getTyp() == AP242Code.CYLINDRICAL_SURFACE){
+            CylindricalSurface cylindricalSurface = (CylindricalSurface) faceGeometrie;
+            System.out.println("CYLINDER SURFACE");
+            System.out.println(cylindricalSurface.getRadius());
+            for (FaceBound faceB : getFaceBound()){
+                for (Edge edge : faceB.getEdgeLoop().getOrientedEdges()){
+                    System.out.println(edge.getStartX()+ " " + edge.getStartY()+ " " + edge.getStartZ());
+                    System.out.println(edge.getEndX()+ " " + edge.getEndY()+ " " + edge.getEndZ());
+                    renderACylinder(cylindricalSurface.getRadius(),edge.getStartX(), edge.getStartY(), edge.getStartZ(),edge.getEndX(), edge.getEndY(), edge.getEndZ());
+                }
+
+            }
+        }
     }
 
+    private void  renderACylinder(double radius,double startX,double startY,double startZ,double endX,double endY,double endZ){
+        // Separate the Spherical in spherical layers Sektor    // h = höhe der Halbkugel  = a katete  r = hypotenuse
+        int countTrianglePerLayer = StepConfig.COUNTTRIANGLEPERLAYER;
+        double halfSphericalCircumference = (Math.PI * radius);
+        double layerRadiusUP = radius;
+        double layerRadiusDown = radius;
+        double diffX = startX - endX;
+        double diffY = startY - endY;
+        double diffZ = startZ - endZ;
+        double z1 = endZ;
+        double z4 = endZ;
+        double z2 = startZ;
+        double z3 = startZ;
+        for (int y = 0; y < countTrianglePerLayer; y++) {
+            double layerCircumferenceSequenzUP = (2 * Math.PI * radius) / countTrianglePerLayer;////////////////A     D
+            double layerCircumferenceSequenzDown = (2 * Math.PI * radius) / countTrianglePerLayer;///////// B   C
+
+            double pointA = (layerCircumferenceSequenzUP / 2) * (0 % 2) + y * layerCircumferenceSequenzUP;
+            double pointD = (layerCircumferenceSequenzUP / 2) * (0 % 2) + (y + 1) * layerCircumferenceSequenzUP;
+            double pointB = -(layerCircumferenceSequenzDown / 2) * ((0 + 1) % 2) + layerCircumferenceSequenzDown * y;
+            double pointC = -(layerCircumferenceSequenzDown / 2) * ((0 + 1) % 2) + layerCircumferenceSequenzDown * (y + 1);
+            // Calculate Coordinates
+            // Point A
+            double angleBPointA = layerRadiusUP == 0 ? 0 : ((360 / (2 * Math.PI * layerRadiusUP)) * pointA);
+            double angleBPointD = layerRadiusUP == 0 ? 0 : ((360 / (2 * Math.PI * layerRadiusUP)) * pointD);
+            double angleBPointB = layerRadiusDown == 0 ? 0 : ((360 / (2 * Math.PI * layerRadiusDown)) * pointB);
+            double angleBPointC = layerRadiusDown == 0 ? 0 : ((360 / (2 * Math.PI * layerRadiusDown)) * pointC);
+
+            //Transformation X Y
+            double x1 = layerRadiusUP * (-Math.sin(Math.toRadians(angleBPointA)));
+            double y1 = layerRadiusUP * (Math.cos(Math.toRadians(angleBPointA)));
+            double x4 = layerRadiusUP * (-Math.sin(Math.toRadians(angleBPointD)));
+            double y4 = layerRadiusUP * (Math.cos(Math.toRadians(angleBPointD)));
+            double x2 = layerRadiusDown * (-Math.sin(Math.toRadians(angleBPointB)));
+            double y2 = layerRadiusDown * (Math.cos(Math.toRadians(angleBPointB)));
+            double x3 = layerRadiusDown * (-Math.sin(Math.toRadians(angleBPointC)));
+            double y3 = layerRadiusDown * (Math.cos(Math.toRadians(angleBPointC)));
+            // Triangle 1
+
+            drawTriangle(z1+diffZ, z2+diffZ, z3+ diffZ, x1 + diffX, y1 + diffY, x2 + diffX, y2+diffY, x3+diffX, y3+diffY);
+            // Triangle Opposite D B A
+            drawTriangle(z3+diffZ, z1+diffZ, z4+diffZ, x3+diffX, y3+diffY, x1+diffX, y1+diffY, x4+diffX, y4+diffY);
+
+
+        }
+
+    }
     private void renderSphericalSurface(double radius) {
 
         // Separate the Spherical in spherical layers Sektor    // h = höhe der Halbkugel  = a katete  r = hypotenuse
