@@ -1,5 +1,6 @@
 package ch.dcreations.apviewer.Step3DModel.StepShapes.Face;
 
+import ch.dcreations.apviewer.Step3DModel.Config.StepConfig;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.AP242Code;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.Edge.Edge;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.FaceBound;
@@ -32,17 +33,20 @@ public class AdvancedFace extends FaceSurface {
     private void renderSphericalSurface(double radius) {
 
         // Separate the Spherical in spherical layers Sektor    // h = höhe der Halbkugel  = a katete  r = hypotenuse
-        int countLayers = 15; // Half Spherical needs to be uneven
-        int countTrianglePerLayer = 21;
-        double hLayer = radius / countLayers;
+        int countLayers = StepConfig.COUNTLAYERS; // Half Spherical needs to be uneven
+        int countTrianglePerLayer = StepConfig.COUNTTRIANGLEPERLAYER;
+        double halfSphericalCircumference = (Math.PI * radius);
+        double hLayer = 90 / countLayers;
 
         //for each Layer calculate circumference
         for(int k = 1 ; k > -2 ; k -= 2){
         for (int i = 0; i < countLayers; i++) {
-            double distanceFromSphericalTop = (hLayer * i);
+            double hLayerUP = radius*Math.cos(Math.toRadians(90 / countLayers*i));
+            double hLayerDOWN = radius*Math.cos(Math.toRadians(90 / countLayers*(i + 1)));
+            double distanceFromSphericalTop = radius-hLayerUP;
             double aCatate = radius - distanceFromSphericalTop;
             double layerRadiusUP = Math.sqrt(radius * radius - aCatate * aCatate);
-            double distanceFromSphericalTopDown = (hLayer * (i + 1));
+            double distanceFromSphericalTopDown = (radius-hLayerDOWN);
             double aCathetusADown = radius - distanceFromSphericalTopDown;
             double layerRadiusDown = Math.sqrt(radius * radius - aCathetusADown * aCathetusADown);
             for (int y = 0; y < countTrianglePerLayer; y++) {
