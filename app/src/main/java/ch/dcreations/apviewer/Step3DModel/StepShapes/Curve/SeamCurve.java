@@ -7,7 +7,7 @@ import ch.dcreations.apviewer.Step3DModel.StepShapes.StepShapes;
 import java.util.Set;
 
 public class SeamCurve extends SurfaceCurve{
-    public SeamCurve(String name, StepShapes curve, Set<StepShapes> items, PreferredSurfaceCurveRepresentation representation, int lineNumber) {
+    public SeamCurve(String name, Curve curve, Set<StepShapes> items, PreferredSurfaceCurveRepresentation representation, int lineNumber) {
         super(name, curve, items, representation, AP242Code.SEAM_CURVE ,lineNumber);
     }
 }

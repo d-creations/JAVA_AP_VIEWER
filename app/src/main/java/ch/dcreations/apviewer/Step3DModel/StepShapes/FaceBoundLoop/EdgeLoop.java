@@ -2,6 +2,7 @@ package ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop;
 
 import ch.dcreations.apviewer.Step3DModel.StepShapes.AP242Code;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.Edge.Edge;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.Edge.OrientedEdge;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.StepShapes;
 import javafx.scene.control.TreeItem;
 
@@ -12,14 +13,14 @@ import java.util.Set;
 
 public class EdgeLoop extends Loop {
 
-    Set<Edge> orientedEdges;
+    Set<OrientedEdge> orientedEdges;
 
-    public EdgeLoop(String name, Set<Edge> orientedEdges,int lineNumber) {
+    public EdgeLoop(String name, Set<OrientedEdge> orientedEdges,int lineNumber) {
         super(name,lineNumber,AP242Code.EDGE_LOOP);
         this.orientedEdges = orientedEdges;
     }
 
-    public Set<Edge> getOrientedEdges() {
+    public Set<OrientedEdge> getOrientedEdges() {
         return Set.copyOf(orientedEdges);
     }
 

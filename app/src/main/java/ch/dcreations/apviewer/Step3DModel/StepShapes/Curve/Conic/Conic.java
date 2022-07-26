@@ -16,4 +16,8 @@ public class Conic extends Curve {
     protected Conic(String name, Axis2Placement3D position,int fileLineNumber) {
         this(name,position, fileLineNumber, AP242Code.CONIC);
     }
+
+    public Axis2Placement3D getPosition() {
+        return position;
+    }
 }

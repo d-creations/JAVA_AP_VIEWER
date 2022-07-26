@@ -105,12 +105,6 @@ public class Edge extends StepShapes {
         return edgeEnd;
     }
 
-    @Override
-    public AP242Code getTyp() {
-        return AP242Code.EDGE;
-    }
-
-
     //Drawing
 
 

@@ -3,6 +3,7 @@ package ch.dcreations.apviewer.Step3DModel;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.*;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.ConnectedFaceSet.ClosedShell;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Curve.Conic.Circle;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.Curve.StepLine;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Curve.Curve;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Curve.SeamCurve;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Curve.SurfaceCurve;
@@ -143,7 +144,7 @@ public class AP242Decoder {
                 String axis1 = dataMap.get(axisLineNumber);
                 String refDirection = dataMap.get(refDirectionNumber);
                 try {
-                    return new Axis2Placement3D(name, calculateDecoding(location,locationNameNumber), calculateDecoding(axis1,axisLineNumber), calculateDecoding(refDirection,refDirectionNumber),lineNumber);
+                    return new Axis2Placement3D(name, (CartesianPoint) calculateDecoding(location,locationNameNumber), (Direction) calculateDecoding(axis1,axisLineNumber),(Direction) calculateDecoding(refDirection,refDirectionNumber),lineNumber);
                 } catch (Exception e) {
                     System.err.println("AXIS2_PLACEMENT_3D parrameter Error");
                     return null;
@@ -350,7 +351,7 @@ public class AP242Decoder {
                     items.add(calculateDecoding(code,codeNumber));
                 }
                 PreferredSurfaceCurveRepresentation representation = getPreferredEnum(numbers[numbers.length - 1].replace("#", ""));
-                return new SeamCurve(name, curve, items, representation,lineNumber);
+                return new SeamCurve(name, (Curve) curve, items, representation,lineNumber);
             }
 
             case "PCURVE" -> {
@@ -379,7 +380,7 @@ public class AP242Decoder {
                     items.add(calculateDecoding(code,codeNumber));
                 }
                 PreferredSurfaceCurveRepresentation representation = getPreferredEnum(numbers[numbers.length - 1].replace("#", ""));
-                return new SurfaceCurve(name, curve, items, representation,lineNumber);
+                return new SurfaceCurve(name, (Curve) curve, items, representation,lineNumber);
             }
 
             default -> {

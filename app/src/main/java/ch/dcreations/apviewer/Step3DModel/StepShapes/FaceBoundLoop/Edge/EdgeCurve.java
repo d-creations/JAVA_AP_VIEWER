@@ -2,11 +2,13 @@ package ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.Edge;
 
 import ch.dcreations.apviewer.Step3DModel.StepShapes.AP242Code;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Curve.Curve;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.Curve.IncrementalPointsD;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.StepShapes;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Vertex.Vertex;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Vertex.VertexPoint;
 import javafx.scene.control.TreeItem;
 
+import java.util.*;
 
 
 /**
@@ -14,6 +16,7 @@ import javafx.scene.control.TreeItem;
  */
 public class EdgeCurve extends Edge {
 
+    protected List<IncrementalPointsD> edgeDrawingPoints = new ArrayList<IncrementalPointsD>();
     protected Curve edgeGeometrie; //vertex
     protected Boolean sameSense;//vertex
 
@@ -26,7 +29,14 @@ public class EdgeCurve extends Edge {
         super(name,edgeStart,edgeEnd,lineNumber,AP242Code.EDGE_CURVE);
         this.edgeGeometrie = edgeGeometrie;
         this.sameSense = sameSense;
+        calculateEdgeDrawingPoints(edgeStart,edgeEnd);
     }
+
+    private void calculateEdgeDrawingPoints(VertexPoint start,VertexPoint end){
+        edgeDrawingPoints = edgeGeometrie.getEdgeDrawingPoints(start,end);
+        return;
+    }
+
 
     @Override
     public TreeItem<StepShapes> getTreeItem() {
@@ -36,4 +46,7 @@ public class EdgeCurve extends Edge {
         return treeItem;
     }
 
+    public List<IncrementalPointsD> getEdgeDrawingPoints() {
+        return Collections.unmodifiableList(edgeDrawingPoints);
+    }
 }

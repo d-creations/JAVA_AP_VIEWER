@@ -32,4 +32,8 @@ public class OrientedEdge extends Edge {
         treeItem.getChildren().add(edgeElement.getTreeItem());
         return treeItem;
     }
+
+    public Edge getEdgeElement() {
+        return edgeElement;
+    }
 }
