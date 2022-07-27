@@ -2,6 +2,7 @@ package ch.dcreations.apviewer.Step3DModel.StepShapes.Face;
 
 import ch.dcreations.apviewer.Step3DModel.Config.StepConfig;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.AP242Code;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.Curve.IncrementalPointsD;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.Edge.Edge;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.Edge.OrientedEdge;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.FaceBound;
@@ -28,7 +29,7 @@ public class AdvancedFace extends FaceSurface {
             case CYLINDRICAL_SURFACE -> {
                 for (FaceBound faceB : getFaceBound()){
                     for (Edge edge : faceB.getEdgeLoop().getOrientedEdges()){
-                        renderACylinder(((CylindricalSurface)faceGeometrie).getRadius(),edge.getStartX(), edge.getStartY(), edge.getStartZ(),edge.getEndX(), edge.getEndY(), edge.getEndZ());
+                      //  renderACylinder(((CylindricalSurface)faceGeometrie).getRadius(),edge.getStartX(), edge.getStartY(), edge.getStartZ(),edge.getEndX(), edge.getEndY(), edge.getEndZ());
                     }
                 }
             }
@@ -97,44 +98,48 @@ public class AdvancedFace extends FaceSurface {
             if (face.getEdgeLoop() != null) {
                 List<OrientedEdge> tempAllEdges = new ArrayList<>(face.getEdgeLoop().getOrientedEdges());
                 for (int i = 0; i < tempAllEdges.size(); i++) {
-                    System.out.println(tempAllEdges.get(0).getEdgeElement().getTyp());
-                    Double x1 = tempAllEdges.get(0).getStartX();
-                    Double y1 = tempAllEdges.get(0).getStartY();
-                    Double z1 = tempAllEdges.get(0).getStartZ();
-                    this.stepDrawLinesForTriangle.add(getCartesianPoint(x1, y1, z1));//p1   -1
-                    Double x2 = tempAllEdges.get(0).getEndX();
-                    Double y2 = tempAllEdges.get(0).getEndY();
-                    Double z2 = tempAllEdges.get(0).getEndZ();
-                    this.stepDrawLinesForTriangle.add(getCartesianPoint(x2, y2, z2));//p2    -2
-                    Double x3 = tempAllEdges.get(i).getStartX();
-                    Double y3 = tempAllEdges.get(i).getStartY();
-                    Double z3 = tempAllEdges.get(i).getStartZ();
-                    this.stepDrawLinesForTriangle.add(getCartesianPoint(x3, y3, z3));//p3      -END
-                    this.stepDrawLinesForTriangle.add(getCartesianPoint(x1, y1, z1));//p4     -1
-                    this.stepDrawLinesForTriangle.add(getCartesianPoint(x2, y2, z2));//P5      -2
-                    double x4 = tempAllEdges.get(i).getEndX();
-                    double y4 = tempAllEdges.get(i).getEndY();
-                    double z4 = tempAllEdges.get(i).getEndZ();
-                    addTriangles(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
-                    x1 = tempAllEdges.get(tempAllEdges.size() - 1).getStartX();
-                    y1 = tempAllEdges.get(tempAllEdges.size() - 1).getStartY();
-                    z1 = tempAllEdges.get(tempAllEdges.size() - 1).getStartZ();
-                    this.stepDrawLinesForTriangle.add(getCartesianPoint(x1, y1, z1));//p1   -1
-                    x2 = tempAllEdges.get(tempAllEdges.size() - 1).getEndX();
-                    y2 = tempAllEdges.get(tempAllEdges.size() - 1).getEndY();
-                    z2 = tempAllEdges.get(tempAllEdges.size() - 1).getEndZ();
-                    this.stepDrawLinesForTriangle.add(getCartesianPoint(x2, y2, z2));//p2    -2
-                    x3 = tempAllEdges.get(i).getEndX();
-                    y3 = tempAllEdges.get(i).getEndY();
-                    z3 = tempAllEdges.get(i).getEndZ();
-                    this.stepDrawLinesForTriangle.add(getCartesianPoint(x3, y3, z3));//p3      -END
-                    this.stepDrawLinesForTriangle.add(getCartesianPoint(x1, y1, z1));//p4     -1
-                    this.stepDrawLinesForTriangle.add(getCartesianPoint(x2, y2, z2));//P5      -2
-                    x4 = tempAllEdges.get(i).getStartX();
-                    y4 = tempAllEdges.get(i).getStartY();
-                    z4 = tempAllEdges.get(i).getStartZ();
-                    addTriangles(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
-                }
+                    for (int y = 0;y<tempAllEdges.get(i).getEdgeElement().getEdgeDrawingPoints().size();y++) {
+                        IncrementalPointsD incrementalPointsDStart = tempAllEdges.get(i).getEdgeElement().getEdgeDrawingPoints().get(0);
+                        IncrementalPointsD incrementalPointsD = tempAllEdges.get(i).getEdgeElement().getEdgeDrawingPoints().get(y);
+                        System.out.println(tempAllEdges.get(0).getEdgeElement().getTyp());
+                        Double x1 = incrementalPointsDStart.x();//tempAllEdges.get(0).getStartX();
+                        Double y1 = incrementalPointsDStart.y();//tempAllEdges.get(0).getStartY();
+                        Double z1 = incrementalPointsDStart.z();//tempAllEdges.get(0).getStartZ();
+                        this.stepDrawLinesForTriangle.add(getCartesianPoint(x1, y1, z1));//p1   -1
+                        Double x2 =  tempAllEdges.get(0).getEndX();
+                        Double y2 = tempAllEdges.get(0).getEndY();
+                        Double z2 = tempAllEdges.get(0).getEndZ();
+                        this.stepDrawLinesForTriangle.add(getCartesianPoint(x2, y2, z2));//p2    -2
+                        Double x3 = incrementalPointsD.x();//tempAllEdges.get(i).getStartX();
+                        Double y3 = incrementalPointsD.y();//tempAllEdges.get(i).getStartY();
+                        Double z3 = incrementalPointsD.z();//tempAllEdges.get(i).getStartZ();
+                        this.stepDrawLinesForTriangle.add(getCartesianPoint(x3, y3, z3));//p3      -END
+                        this.stepDrawLinesForTriangle.add(getCartesianPoint(x1, y1, z1));//p4     -1
+                        this.stepDrawLinesForTriangle.add(getCartesianPoint(x2, y2, z2));//P5      -2
+                        double x4 = incrementalPointsD.x();//tempAllEdges.get(i).getEndX();
+                        double y4 = incrementalPointsD.y();//tempAllEdges.get(i).getEndY();
+                        double z4 = incrementalPointsD.z();//tempAllEdges.get(i).getEndZ();
+                        addTriangles(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
+                        x1 = tempAllEdges.get(tempAllEdges.size() - 1).getStartX();
+                        y1 = tempAllEdges.get(tempAllEdges.size() - 1).getStartY();
+                        z1 = tempAllEdges.get(tempAllEdges.size() - 1).getStartZ();
+                        this.stepDrawLinesForTriangle.add(getCartesianPoint(x1, y1, z1));//p1   -1
+                        x2 = tempAllEdges.get(tempAllEdges.size() - 1).getEndX();
+                        y2 = tempAllEdges.get(tempAllEdges.size() - 1).getEndY();
+                        z2 = tempAllEdges.get(tempAllEdges.size() - 1).getEndZ();
+                        this.stepDrawLinesForTriangle.add(getCartesianPoint(x2, y2, z2));//p2    -2
+                        x3 = incrementalPointsD.x();//tempAllEdges.get(i).getEndX();
+                        y3 = incrementalPointsD.y();//tempAllEdges.get(i).getEndY();
+                        z3 = incrementalPointsD.z();//tempAllEdges.get(i).getEndZ();
+                        this.stepDrawLinesForTriangle.add(getCartesianPoint(x3, y3, z3));//p3      -END
+                        this.stepDrawLinesForTriangle.add(getCartesianPoint(x1, y1, z1));//p4     -1
+                        this.stepDrawLinesForTriangle.add(getCartesianPoint(x2, y2, z2));//P5      -2
+                        x4 = tempAllEdges.get(i).getStartX();
+                        y4 = tempAllEdges.get(i).getStartY();
+                        z4 = tempAllEdges.get(i).getStartZ();
+                        addTriangles(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
+                        }
+                    }
             }
         }
     }

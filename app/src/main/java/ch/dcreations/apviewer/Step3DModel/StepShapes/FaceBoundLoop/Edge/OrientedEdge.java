@@ -8,10 +8,10 @@ import javafx.scene.control.TreeItem;
 
 public class OrientedEdge extends Edge {
 
-    protected Edge edgeElement;
+    protected EdgeCurve edgeElement;
     protected Boolean orientation;
 
-    public OrientedEdge(String name, Vertex edgeStart, Vertex edgeEnd, Edge edgeElement, Boolean orientation,int lineNumber) {
+    public OrientedEdge(String name, Vertex edgeStart, Vertex edgeEnd, EdgeCurve edgeElement, Boolean orientation,int lineNumber) {
         super(name,edgeElement.getEdgeStart(),edgeElement.getEdgeEnd(),lineNumber,AP242Code.ORIENTED_EDGE);
         this.edgeElement = edgeElement;
         this.orientation = orientation;
@@ -33,7 +33,7 @@ public class OrientedEdge extends Edge {
         return treeItem;
     }
 
-    public Edge getEdgeElement() {
+    public EdgeCurve getEdgeElement() {
         return edgeElement;
     }
 }

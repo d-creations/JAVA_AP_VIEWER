@@ -227,7 +227,7 @@ public class AP242Decoder {
                     String edgeEnd = numbers[2];
                     int codeNumber = Integer.valueOf(numbers[3].replace("#", ""));
                     String code = dataMap.get(codeNumber);
-                    Edge edgeElement = (Edge) calculateDecoding(code,codeNumber);
+                    EdgeCurve edgeElement = (EdgeCurve) calculateDecoding(code,codeNumber);
                     Boolean orientation = !Objects.equals(numbers[numbers.length - 1], ".F.");
                     return new OrientedEdge(name, new SimpleVertexD(edgeStart,lineNumber), new SimpleVertexD(edgeEnd,lineNumber), edgeElement, orientation,lineNumber);
                 } catch (Exception e) {
@@ -264,7 +264,7 @@ public class AP242Decoder {
                     if (point.getTyp() == AP242Code.CARTESIAN_POINT)
                         return new VertexPoint(name, (CartesianPoint) calculateDecoding(code,codeNumber),lineNumber);
                     if (point.getTyp() == AP242Code.POINT)
-                        return new VertexPoint(name, (Point) calculateDecoding(code,codeNumber),lineNumber);
+                        return new VertexPoint(name, (CartesianPoint) calculateDecoding(code,codeNumber),lineNumber);
                     throw new IllegalArgumentException(" Point ");
                 } catch (Exception e) {
                     System.err.println("PLANE position was not a Position");

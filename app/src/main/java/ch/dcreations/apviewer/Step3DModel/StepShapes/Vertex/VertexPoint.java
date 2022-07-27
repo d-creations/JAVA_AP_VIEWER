@@ -14,16 +14,16 @@ import java.util.Map;
 
 public class VertexPoint extends Vertex {
 
-    Point point;
+    CartesianPoint point;
 
-    public VertexPoint(String name, Point point,int lineNumber) {
+    public VertexPoint(String name, CartesianPoint point,int lineNumber) {
         super(name,lineNumber,AP242Code.VERTEX_POINT);
         this.point = point;
     }
 
 
     @Override
-    public Point ifExistGivePoint() {
+    public CartesianPoint ifExistGivePoint() {
         return this.point;
     }
 
