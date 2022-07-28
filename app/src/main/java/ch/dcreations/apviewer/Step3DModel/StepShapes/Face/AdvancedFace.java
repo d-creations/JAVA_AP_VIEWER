@@ -29,7 +29,7 @@ public class AdvancedFace extends FaceSurface {
             case CYLINDRICAL_SURFACE -> {
                 for (FaceBound faceB : getFaceBound()){
                     for (Edge edge : faceB.getEdgeLoop().getOrientedEdges()){
-                      //  renderACylinder(((CylindricalSurface)faceGeometrie).getRadius(),edge.getStartX(), edge.getStartY(), edge.getStartZ(),edge.getEndX(), edge.getEndY(), edge.getEndZ());
+                        renderACylinder(((CylindricalSurface)faceGeometrie).getRadius(),edge.getStartX(), edge.getStartY(), edge.getStartZ(),edge.getEndX(), edge.getEndY(), edge.getEndZ());
                     }
                 }
             }
@@ -99,20 +99,27 @@ public class AdvancedFace extends FaceSurface {
                 List<OrientedEdge> tempAllEdges = new ArrayList<>(face.getEdgeLoop().getOrientedEdges());
                 for (int i = 0; i < tempAllEdges.size(); i++) {
                     for (int y = 0;y<tempAllEdges.get(i).getEdgeElement().getEdgeDrawingPoints().size();y++) {
-                        IncrementalPointsD incrementalPointsDStart = tempAllEdges.get(i).getEdgeElement().getEdgeDrawingPoints().get(0);
+                        int z  = (y+1 >= tempAllEdges.get(i).getEdgeElement().getEdgeDrawingPoints().size()) ? 0 : y+1;
+                        IncrementalPointsD incrementalPointsDStartEdgeStart = tempAllEdges.get(0).getEdgeElement().getEdgeDrawingPoints().get(0);
+                        IncrementalPointsD incrementalPointsDStart = tempAllEdges.get(0).getEdgeElement().getEdgeDrawingPoints().get(z);
                         IncrementalPointsD incrementalPointsD = tempAllEdges.get(i).getEdgeElement().getEdgeDrawingPoints().get(y);
                         System.out.println(tempAllEdges.get(0).getEdgeElement().getTyp());
-                        Double x1 = incrementalPointsDStart.x();//tempAllEdges.get(0).getStartX();
-                        Double y1 = incrementalPointsDStart.y();//tempAllEdges.get(0).getStartY();
-                        Double z1 = incrementalPointsDStart.z();//tempAllEdges.get(0).getStartZ();
+                        Double x1 = tempAllEdges.get(0).getStartX();
+                        Double y1 = tempAllEdges.get(0).getStartY();
+                        Double z1 = tempAllEdges.get(0).getStartZ();
+                        if (y > 0) {
+                             x1 = incrementalPointsDStartEdgeStart.x();
+                             y1 = incrementalPointsDStartEdgeStart.y();
+                             z1 = incrementalPointsDStartEdgeStart.z();
+                        }
                         this.stepDrawLinesForTriangle.add(getCartesianPoint(x1, y1, z1));//p1   -1
-                        Double x2 =  tempAllEdges.get(0).getEndX();
-                        Double y2 = tempAllEdges.get(0).getEndY();
-                        Double z2 = tempAllEdges.get(0).getEndZ();
+                        Double x2 =incrementalPointsDStart.x(); // tempAllEdges.get(0).getEndX();
+                        Double y2 =incrementalPointsDStart.y(); //tempAllEdges.get(0).getEndY();
+                        Double z2 = incrementalPointsDStart.z(); // tempAllEdges.get(0).getEndZ();
                         this.stepDrawLinesForTriangle.add(getCartesianPoint(x2, y2, z2));//p2    -2
-                        Double x3 = incrementalPointsD.x();//tempAllEdges.get(i).getStartX();
-                        Double y3 = incrementalPointsD.y();//tempAllEdges.get(i).getStartY();
-                        Double z3 = incrementalPointsD.z();//tempAllEdges.get(i).getStartZ();
+                        Double x3 = tempAllEdges.get(i).getStartX();
+                        Double y3 = tempAllEdges.get(i).getStartY();
+                        Double z3 = tempAllEdges.get(i).getStartZ();
                         this.stepDrawLinesForTriangle.add(getCartesianPoint(x3, y3, z3));//p3      -END
                         this.stepDrawLinesForTriangle.add(getCartesianPoint(x1, y1, z1));//p4     -1
                         this.stepDrawLinesForTriangle.add(getCartesianPoint(x2, y2, z2));//P5      -2
@@ -132,6 +139,8 @@ public class AdvancedFace extends FaceSurface {
                         y3 = incrementalPointsD.y();//tempAllEdges.get(i).getEndY();
                         z3 = incrementalPointsD.z();//tempAllEdges.get(i).getEndZ();
                         this.stepDrawLinesForTriangle.add(getCartesianPoint(x3, y3, z3));//p3      -END
+
+
                         this.stepDrawLinesForTriangle.add(getCartesianPoint(x1, y1, z1));//p4     -1
                         this.stepDrawLinesForTriangle.add(getCartesianPoint(x2, y2, z2));//P5      -2
                         x4 = tempAllEdges.get(i).getStartX();

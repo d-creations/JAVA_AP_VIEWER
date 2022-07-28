@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import static ch.dcreations.apviewer.Step3DModel.Config.StepConfig.CIRCALRESOLUTION;
+
 public class SurfaceCurve extends Curve {
     protected Curve curve;
     protected Set<StepShapes> items;
@@ -30,21 +32,22 @@ public class SurfaceCurve extends Curve {
 
     @Override
     public List<IncrementalPointsD> getEdgeDrawingPoints(VertexPoint start, VertexPoint end) {
-        switch (curve.getTyp()){
-            case LINE -> calculateLineGeometrie(start,end);
-            case CIRCLE -> calculateCurveGeometrie(start,end);
+        switch (curve.getTyp()) {
+            case LINE -> calculateLineGeometrie(start, end);
+            case CIRCLE -> calculateCurveGeometrie(start, end);
         }
         return super.getEdgeDrawingPoints(start, end);
     }
 
 
-    private void calculateLineGeometrie(VertexPoint start, VertexPoint end){
+    private void calculateLineGeometrie(VertexPoint start, VertexPoint end) {
         System.out.println("Line Geometrie");
-        this.edgeDrawingPoints.add(new IncrementalPointsD(start.ifExistGivePoint().getPoint().get(CartasianAxisE.X), start.ifExistGivePoint().getPoint().get(CartasianAxisE.Y),start.ifExistGivePoint().getPoint().get(CartasianAxisE.Z)));
-        this.edgeDrawingPoints.add(new IncrementalPointsD(end.ifExistGivePoint().getPoint().get(CartasianAxisE.X), end.ifExistGivePoint().getPoint().get(CartasianAxisE.Y),end.ifExistGivePoint().getPoint().get(CartasianAxisE.Z)));
+        //this.edgeDrawingPoints.add(new IncrementalPointsD(start.ifExistGivePoint().getPoint().get(CartasianAxisE.X), start.ifExistGivePoint().getPoint().get(CartasianAxisE.Y),start.ifExistGivePoint().getPoint().get(CartasianAxisE.Z)));
+        this.edgeDrawingPoints.add(new IncrementalPointsD(end.ifExistGivePoint().getPoint().get(CartasianAxisE.X), end.ifExistGivePoint().getPoint().get(CartasianAxisE.Y), end.ifExistGivePoint().getPoint().get(CartasianAxisE.Z)));
         //@todo this.edgeDrawingPoints.add(new IncrementalPointsD();
     }
-    private void calculateCurveGeometrie(VertexPoint start, VertexPoint end){
+
+    private void calculateCurveGeometrie(VertexPoint start, VertexPoint end) {
         System.out.println("circle geometrie");
         try {
             Circle circle = (Circle) curve;
@@ -68,28 +71,35 @@ public class SurfaceCurve extends Curve {
             endXBasisN = ((CartesianPoint) end.ifExistGivePoint()).getPoint().get(CartasianAxisE.X) - middlePoint.getPoint().get(CartasianAxisE.X);
             endYBasisN = ((CartesianPoint) end.ifExistGivePoint()).getPoint().get(CartasianAxisE.Y) - middlePoint.getPoint().get(CartasianAxisE.Y);
             endZBasisN = ((CartesianPoint) end.ifExistGivePoint()).getPoint().get(CartasianAxisE.Z) - middlePoint.getPoint().get(CartasianAxisE.Z);
+            this.edgeDrawingPoints.add(new IncrementalPointsD(middlePoint.getPoint().get(CartasianAxisE.X), middlePoint.getPoint().get(CartasianAxisE.Y), middlePoint.getPoint().get(CartasianAxisE.Z)));
+
             // move in first dirextion = x   second Direceten = y  trith direction = z   as symbol e
-            //this.edgeDrawingPoints.add(new IncrementalPointsD(middlePoint.getPoint().get(CartasianAxisE.X),middlePoint.getPoint().get(CartasianAxisE.Y),middlePoint.getPoint().get(CartasianAxisE.Z)));
-            for (int i = 0;i<200;i++) {
+            int i = 0;
+            double DistanceToEndPoint = 99999;
+            while (i<360 && ((DistanceToEndPoint > (2*CIRCALRESOLUTION) && i > (5*CIRCALRESOLUTION))|| i <  10*CIRCALRESOLUTION)) {
+
+
                 double x = circle.getRadius() * (-Math.sin(Math.toRadians(i)));
                 double y = circle.getRadius() * (Math.cos(Math.toRadians(i)));
-                double  z = 0;
+                double z = 0;
 
 
                 //Basiswechsel mit dem Einheits Normalvektor
-                double xBasisN = x * firstDirectionE.getDirectionRatios().get(0) + y * secondDirectionE.getDirectionRatios().get(0) + z * axis.getDirectionRatios().get(0);
-                double yBasisN = x * firstDirectionE.getDirectionRatios().get(1) + y * secondDirectionE.getDirectionRatios().get(1) + z * axis.getDirectionRatios().get(1);
-                ;
-                double zBasisN = x * firstDirectionE.getDirectionRatios().get(2) + y * secondDirectionE.getDirectionRatios().get(2) + z * axis.getDirectionRatios().get(2);
+                double yBasisN = y * firstDirectionE.getDirectionRatios().get(1) + x * secondDirectionE.getDirectionRatios().get(1) + z * axis.getDirectionRatios().get(1);
+                double xBasisN = y * firstDirectionE.getDirectionRatios().get(0) + x * secondDirectionE.getDirectionRatios().get(0) + z * axis.getDirectionRatios().get(0);
+                double zBasisN = y * firstDirectionE.getDirectionRatios().get(2) + x * secondDirectionE.getDirectionRatios().get(2) + z * axis.getDirectionRatios().get(2);
                 ;
                 // Transformation to MiddlePoint
+                DistanceToEndPoint = Math.sqrt((-xBasisN + endXBasisN) * (-xBasisN + endXBasisN) + (-yBasisN + endYBasisN) * (-yBasisN + endYBasisN) + (-zBasisN + endZBasisN) * (-zBasisN + endZBasisN));
+
                 xBasisN += middlePoint.getPoint().get(CartasianAxisE.X);
                 yBasisN += middlePoint.getPoint().get(CartasianAxisE.Y);
                 zBasisN += middlePoint.getPoint().get(CartasianAxisE.Z);
                 this.edgeDrawingPoints.add(new IncrementalPointsD(xBasisN, yBasisN, zBasisN));
+
+                i += CIRCALRESOLUTION;
             }
-            this.edgeDrawingPoints.add(new IncrementalPointsD(end.ifExistGivePoint().getPoint().get(CartasianAxisE.X), end.ifExistGivePoint().getPoint().get(CartasianAxisE.Y),end.ifExistGivePoint().getPoint().get(CartasianAxisE.Z)));
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println("Points where not defined ");
             System.out.println(e.getMessage());
         }
@@ -99,7 +109,7 @@ public class SurfaceCurve extends Curve {
     public TreeItem<StepShapes> getTreeItem() {
         TreeItem<StepShapes> treeItem = new TreeItem<>(this);
         treeItem.getChildren().add(curve.getTreeItem());
-        for(StepShapes item : items){
+        for (StepShapes item : items) {
             treeItem.getChildren().add(item.getTreeItem());
         }
         return treeItem;

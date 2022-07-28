@@ -6,5 +6,5 @@ public class StepConfig {
     public static final int COUNTLAYERS = 30; // Half Spherical needs to be uneven
     public static final int COUNTTRIANGLEPERLAYER = 50;
 
-    public static final int CIRCALRESOLUTION = 40;
+    public static final int CIRCALRESOLUTION = 1;//1 DEGRE
 }
