@@ -2,7 +2,9 @@ package ch.dcreations.apviewer.Step3DModel.StepShapes.Face;
 
 import ch.dcreations.apviewer.Step3DModel.Config.StepConfig;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.AP242Code;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.Axis2Placement3D;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Curve.IncrementalPointsD;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.Direction;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.Edge.Edge;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.Edge.OrientedEdge;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.FaceBound;
@@ -25,11 +27,11 @@ public class AdvancedFace extends FaceSurface {
         preferencesMapList.add(preferencesMap);
         switch (faceGeometrie.getTyp()){
             case PLANE -> renderPlan();
-            case SPHERICAL_SURFACE ->renderSphericalSurface(((SphericalSurface) faceGeometrie).getRadius());
+            case SPHERICAL_SURFACE ->renderSphericalSurface(((SphericalSurface) faceGeometrie).getRadius(),((SphericalSurface) faceGeometrie).getPosition());
             case CYLINDRICAL_SURFACE -> {
                 for (FaceBound faceB : getFaceBound()){
                     for (Edge edge : faceB.getEdgeLoop().getOrientedEdges()){
-                        renderACylinder(((CylindricalSurface)faceGeometrie).getRadius(),edge.getStartX(), edge.getStartY(), edge.getStartZ(),edge.getEndX(), edge.getEndY(), edge.getEndZ());
+                        renderACylinder(((CylindricalSurface)faceGeometrie).getRadius(),((CylindricalSurface)faceGeometrie).getPosition(),edge);
                     }
                 }
             }
@@ -38,24 +40,46 @@ public class AdvancedFace extends FaceSurface {
         }
     }
 
-    private void  renderACylinder(double radius,double startX,double startY,double startZ,double endX,double endY,double endZ){
+    private void  renderACylinder(double radius,Axis2Placement3D position, Edge edge){
+        CartesianPoint middlePoint = position.getLocation();
+        Direction axis = position.getAxis();
+        Direction firstDirectionE = position.getDirection();
+        // Kreuzprodukt
+        List<Double> secondDirectionList = new ArrayList<>();
+        secondDirectionList.add(axis.getDirectionRatios().get(1) * firstDirectionE.getDirectionRatios().get(2) - axis.getDirectionRatios().get(2) * firstDirectionE.getDirectionRatios().get(1)); // add X
+        secondDirectionList.add(axis.getDirectionRatios().get(2) * firstDirectionE.getDirectionRatios().get(0) - axis.getDirectionRatios().get(0) * firstDirectionE.getDirectionRatios().get(2)); // add Y
+        secondDirectionList.add(axis.getDirectionRatios().get(0) * firstDirectionE.getDirectionRatios().get(1) - axis.getDirectionRatios().get(1) * firstDirectionE.getDirectionRatios().get(0)); // add Z
+        Direction secondDirectionE = new Direction("", secondDirectionList, 0);
+        double x = edge.getStartX();
+        double y = edge.getStartY();
+        double z = edge.getStartZ();
+        double startX = y * firstDirectionE.getDirectionRatios().get(0) + x * secondDirectionE.getDirectionRatios().get(0) + z * axis.getDirectionRatios().get(0);
+        double startY = y * firstDirectionE.getDirectionRatios().get(1) + x * secondDirectionE.getDirectionRatios().get(1) + z * axis.getDirectionRatios().get(1);
+        double startZ = y * firstDirectionE.getDirectionRatios().get(2) + x * secondDirectionE.getDirectionRatios().get(2) + z * axis.getDirectionRatios().get(2);
+        x = edge.getEndX();
+         y = edge.getEndY();
+         z = edge.getEndZ();
         // Separate the Spherical in spherical layers Sektor    // h = höhe der Halbkugel  = a katete  r = hypotenuse
+        double endX = y * firstDirectionE.getDirectionRatios().get(0) + x * secondDirectionE.getDirectionRatios().get(0) + z * axis.getDirectionRatios().get(0);
+        double endY = y * firstDirectionE.getDirectionRatios().get(1) + x * secondDirectionE.getDirectionRatios().get(1) + z * axis.getDirectionRatios().get(1);
+        double endZ = y * firstDirectionE.getDirectionRatios().get(2) + x * secondDirectionE.getDirectionRatios().get(2) + z * axis.getDirectionRatios().get(2);
+
         int countTrianglePerLayer = StepConfig.COUNTTRIANGLEPERLAYER;
         double layerRadiusUP = radius;
         double layerRadiusDown = radius;
-        double diffX = startX - endX;
-        double diffY = startY - endY;
-        double diffZ = startZ - endZ;
-        double z1 = endZ;
-        double z4 = endZ;
-        double z2 = startZ;
-        double z3 = startZ;
+        double diffX = endX - startX;
+        double diffY = endY - startY;
+        double diffZ =  endZ - startZ;
+        double z1 = startZ;
+        double z4 = startZ;
+        double z2 = endZ;
+        double z3 = endZ;
         int i = 0;
-        CreateAZylinderWithTriangles(radius, countTrianglePerLayer, layerRadiusUP, layerRadiusDown, diffX, diffY, diffZ, z1, z4, z2, z3, i);
+        CreateAZylinderWithTriangles(radius,position, countTrianglePerLayer, layerRadiusUP, layerRadiusDown, diffX, diffY, diffZ, z1, z4, z2, z3, i);
 
     }
 
-    private void renderSphericalSurface(double radius) {
+    private void renderSphericalSurface(double radius,Axis2Placement3D position) {
 
         // Separate the Spherical in spherical layers Sektor    // h = höhe der Halbkugel  = a katete  r = hypotenuse
         int countLayers = StepConfig.COUNTLAYERS; // Half Spherical needs to be uneven
@@ -75,7 +99,7 @@ public class AdvancedFace extends FaceSurface {
             double z4 = aCatate*k;
             double z2 = aCathetusADown*k;
             double z3 = aCathetusADown*k;
-            CreateAZylinderWithTriangles(radius, countTrianglePerLayer, layerRadiusUP, layerRadiusDown, 0, 0, 0, z1, z4, z2, z3, i);
+            CreateAZylinderWithTriangles(radius,position, countTrianglePerLayer, layerRadiusUP, layerRadiusDown, 0, 0, 0, z1, z4, z2, z3, i);
         }
     }
     }
@@ -173,8 +197,19 @@ public class AdvancedFace extends FaceSurface {
 
 
 // DRAW A CYLINDER WITH TRIANGLES
-    private void CreateAZylinderWithTriangles(double radius, int countTrianglePerLayer, double layerRadiusUP, double layerRadiusDown, double diffX, double diffY, double diffZ, double z1, double z4, double z2, double z3, int i) {
+    private void CreateAZylinderWithTriangles(double radius,Axis2Placement3D position, int countTrianglePerLayer, double layerRadiusUP, double layerRadiusDown, double diffX, double diffY, double diffZ, double z1, double z4, double z2, double z3, int i) {
+        CartesianPoint middlePoint = position.getLocation();
+        Direction axis = position.getAxis();
+        Direction firstDirectionE = position.getDirection();
+        // Kreuzprodukt
+        List<Double> secondDirectionList = new ArrayList<>();
+        secondDirectionList.add(axis.getDirectionRatios().get(1) * firstDirectionE.getDirectionRatios().get(2) - axis.getDirectionRatios().get(2) * firstDirectionE.getDirectionRatios().get(1)); // add X
+        secondDirectionList.add(axis.getDirectionRatios().get(2) * firstDirectionE.getDirectionRatios().get(0) - axis.getDirectionRatios().get(0) * firstDirectionE.getDirectionRatios().get(2)); // add Y
+        secondDirectionList.add(axis.getDirectionRatios().get(0) * firstDirectionE.getDirectionRatios().get(1) - axis.getDirectionRatios().get(1) * firstDirectionE.getDirectionRatios().get(0)); // add Z
+        Direction secondDirectionE = new Direction("", secondDirectionList, 0);
+
         for (int y = 0; y < countTrianglePerLayer; y++) {
+
             double layerCircumferenceSequenzUP = (2 * Math.PI * radius) / countTrianglePerLayer;////////////////A     D
             double layerCircumferenceSequenzDown = (2 * Math.PI * radius) / countTrianglePerLayer;///////// B   C
 
@@ -198,10 +233,24 @@ public class AdvancedFace extends FaceSurface {
             double x3 = layerRadiusDown * (-Math.sin(Math.toRadians(angleBPointC)));
             double y3 = layerRadiusDown * (Math.cos(Math.toRadians(angleBPointC)));
             // Triangle 1
+            double x1BasisN = y1 * firstDirectionE.getDirectionRatios().get(0) + x1 * secondDirectionE.getDirectionRatios().get(0) + z1 * axis.getDirectionRatios().get(0);
+            double y1BasisN = y1 * firstDirectionE.getDirectionRatios().get(1) + x1 * secondDirectionE.getDirectionRatios().get(1) + z1 * axis.getDirectionRatios().get(1);
+            double z1BasisN = y1 * firstDirectionE.getDirectionRatios().get(2) + x1 * secondDirectionE.getDirectionRatios().get(2) + z1 * axis.getDirectionRatios().get(2);
+            double x2BasisN = y2 * firstDirectionE.getDirectionRatios().get(0) + x2 * secondDirectionE.getDirectionRatios().get(0) + z2 * axis.getDirectionRatios().get(0);
+            double y2BasisN = y2 * firstDirectionE.getDirectionRatios().get(1) + x2 * secondDirectionE.getDirectionRatios().get(1) + z2 * axis.getDirectionRatios().get(1);
+            double z2BasisN = y2 * firstDirectionE.getDirectionRatios().get(2) + x2 * secondDirectionE.getDirectionRatios().get(2) + z2 * axis.getDirectionRatios().get(2);
+            double x3BasisN = y3 * firstDirectionE.getDirectionRatios().get(0) + x3 * secondDirectionE.getDirectionRatios().get(0) + z3 * axis.getDirectionRatios().get(0);
+            double y3BasisN = y3 * firstDirectionE.getDirectionRatios().get(1) + x3 * secondDirectionE.getDirectionRatios().get(1) + z3 * axis.getDirectionRatios().get(1);
+            double z3BasisN = y3 * firstDirectionE.getDirectionRatios().get(2) + x3 * secondDirectionE.getDirectionRatios().get(2) + z3 * axis.getDirectionRatios().get(2);
+            double x4BasisN = y4 * firstDirectionE.getDirectionRatios().get(0) + x4 * secondDirectionE.getDirectionRatios().get(0) + z4 * axis.getDirectionRatios().get(0);
+            double y4BasisN = y4 * firstDirectionE.getDirectionRatios().get(1) + x4 * secondDirectionE.getDirectionRatios().get(1) + z4 * axis.getDirectionRatios().get(1);
+            double z4BasisN = y4 * firstDirectionE.getDirectionRatios().get(2) + x4 * secondDirectionE.getDirectionRatios().get(2) + z4 * axis.getDirectionRatios().get(2);
 
-            drawTriangle(z1 + diffZ, z2 + diffZ, z3 + diffZ, x1 + diffX, y1 + diffY, x2 + diffX, y2+ diffY, x3+ diffX, y3+ diffY);
+
+
+            drawTriangle(z1BasisN, z2BasisN , z3BasisN, x1BasisN , y1BasisN, x2BasisN , y2BasisN, x3BasisN, y3BasisN);
             // Triangle Opposite D B A
-            drawTriangle(z3 + diffZ, z1 + diffZ, z4 + diffZ, x3+ diffX, y3+ diffY, x1+ diffX, y1+ diffY, x4+ diffX, y4+ diffY);
+            drawTriangle(z3BasisN , z1BasisN , z4BasisN , x3BasisN, y3BasisN, x1BasisN, y1BasisN, x4BasisN, y4BasisN);
 
 
         }

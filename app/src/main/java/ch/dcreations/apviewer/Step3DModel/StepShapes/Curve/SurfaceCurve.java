@@ -76,7 +76,7 @@ public class SurfaceCurve extends Curve {
             // move in first dirextion = x   second Direceten = y  trith direction = z   as symbol e
             int i = 0;
             double DistanceToEndPoint = 99999;
-            while (i<360 && ((DistanceToEndPoint > (2*CIRCALRESOLUTION) && i > (5*CIRCALRESOLUTION))|| i <  10*CIRCALRESOLUTION)) {
+            while (i<360 && ((DistanceToEndPoint > (2*CIRCALRESOLUTION) && i > (5*CIRCALRESOLUTION))|| i <  50*CIRCALRESOLUTION)) {
 
 
                 double x = circle.getRadius() * (-Math.sin(Math.toRadians(i)));

@@ -15,4 +15,8 @@ public class ElementarySurface extends Surface {
     public ElementarySurface(String name,Axis2Placement3D position,int lineNumber) {
         this(name,position,lineNumber,AP242Code.ELEMENTARY_SURFACE);
     }
+
+    public Axis2Placement3D getPosition() {
+        return position;
+    }
 }
