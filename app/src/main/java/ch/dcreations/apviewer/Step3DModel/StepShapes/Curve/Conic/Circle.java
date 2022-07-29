@@ -15,4 +15,8 @@ public class Circle extends Conic{
     public Circle(String name, Axis2Placement3D position,double radius, int fileLineNumber) {
         this(name, position,radius, fileLineNumber,AP242Code.CIRCLE);
     }
+
+    public double getRadius() {
+        return radius;
+    }
 }

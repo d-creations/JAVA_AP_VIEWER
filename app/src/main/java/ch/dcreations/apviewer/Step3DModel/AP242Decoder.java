@@ -3,7 +3,9 @@ package ch.dcreations.apviewer.Step3DModel;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.*;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.ConnectedFaceSet.ClosedShell;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Curve.Conic.Circle;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.Curve.StepLine;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Curve.Curve;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.Curve.SeamCurve;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Curve.SurfaceCurve;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.Edge.Edge;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.Edge.EdgeCurve;
@@ -17,6 +19,7 @@ import ch.dcreations.apviewer.Step3DModel.StepShapes.Point.CartesianPoint;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Point.Point;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.ProductDefinitionFormat.ProductDefinitionFormation;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.ProductDefinitionFormat.ProductDefinitionFormationWithSpecifiedSource;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.Surfaces.CylindricalSurface;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Surfaces.Plane;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Surfaces.SphericalSurface;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Surfaces.Surface;
@@ -141,7 +144,7 @@ public class AP242Decoder {
                 String axis1 = dataMap.get(axisLineNumber);
                 String refDirection = dataMap.get(refDirectionNumber);
                 try {
-                    return new Axis2Placement3D(name, calculateDecoding(location,locationNameNumber), calculateDecoding(axis1,axisLineNumber), calculateDecoding(refDirection,refDirectionNumber),lineNumber);
+                    return new Axis2Placement3D(name, (CartesianPoint) calculateDecoding(location,locationNameNumber), (Direction) calculateDecoding(axis1,axisLineNumber),(Direction) calculateDecoding(refDirection,refDirectionNumber),lineNumber);
                 } catch (Exception e) {
                     System.err.println("AXIS2_PLACEMENT_3D parrameter Error");
                     return null;
@@ -224,7 +227,7 @@ public class AP242Decoder {
                     String edgeEnd = numbers[2];
                     int codeNumber = Integer.valueOf(numbers[3].replace("#", ""));
                     String code = dataMap.get(codeNumber);
-                    Edge edgeElement = (Edge) calculateDecoding(code,codeNumber);
+                    EdgeCurve edgeElement = (EdgeCurve) calculateDecoding(code,codeNumber);
                     Boolean orientation = !Objects.equals(numbers[numbers.length - 1], ".F.");
                     return new OrientedEdge(name, new SimpleVertexD(edgeStart,lineNumber), new SimpleVertexD(edgeEnd,lineNumber), edgeElement, orientation,lineNumber);
                 } catch (Exception e) {
@@ -261,7 +264,7 @@ public class AP242Decoder {
                     if (point.getTyp() == AP242Code.CARTESIAN_POINT)
                         return new VertexPoint(name, (CartesianPoint) calculateDecoding(code,codeNumber),lineNumber);
                     if (point.getTyp() == AP242Code.POINT)
-                        return new VertexPoint(name, (Point) calculateDecoding(code,codeNumber),lineNumber);
+                        return new VertexPoint(name, (CartesianPoint) calculateDecoding(code,codeNumber),lineNumber);
                     throw new IllegalArgumentException(" Point ");
                 } catch (Exception e) {
                     System.err.println("PLANE position was not a Position");
@@ -309,6 +312,20 @@ public class AP242Decoder {
                 }
             }
 
+            case "CYLINDRICAL_SURFACE" -> {
+                int PositionCodeLineNumber = Integer.valueOf(numbers[1].replace("#", ""));
+                double radius = Double.valueOf(numbers[2].replace("#", ""));
+                String PositionCode = dataMap.get(PositionCodeLineNumber);
+                try {
+                    Axis2Placement3D position = (Axis2Placement3D) calculateDecoding(PositionCode,PositionCodeLineNumber);//vertex
+                    return new CylindricalSurface(name, position,radius,lineNumber);
+                } catch (Exception e) {
+                    System.err.println("Cylindrical Construction Failed");
+                    System.err.println(e.getMessage());
+                    return null;
+                }
+            }
+
             case "CIRCLE" -> {
                 int PositionCodeLineNumber = Integer.valueOf(numbers[1].replace("#", ""));
                 double radius = Double.valueOf(numbers[2].replace("#", ""));
@@ -321,6 +338,20 @@ public class AP242Decoder {
                     System.err.println(e.getMessage());
                     return null;
                 }
+            }
+
+            case "SEAM_CURVE" ->  {
+                int codeLineNumber = Integer.valueOf(numbers[1].replace("#", ""));
+                String code = dataMap.get(codeLineNumber);
+                StepShapes curve = calculateDecoding(code,codeLineNumber);//vertex
+                Set<StepShapes> items = new HashSet<>();
+                for (int i = 2; i < numbers.length - 1; i++) {
+                    int codeNumber = Integer.valueOf(numbers[i].replace("#", "").replace("(", "").replace(")", ""));
+                    code = dataMap.get(codeNumber);
+                    items.add(calculateDecoding(code,codeNumber));
+                }
+                PreferredSurfaceCurveRepresentation representation = getPreferredEnum(numbers[numbers.length - 1].replace("#", ""));
+                return new SeamCurve(name, (Curve) curve, items, representation,lineNumber);
             }
 
             case "PCURVE" -> {
@@ -349,7 +380,7 @@ public class AP242Decoder {
                     items.add(calculateDecoding(code,codeNumber));
                 }
                 PreferredSurfaceCurveRepresentation representation = getPreferredEnum(numbers[numbers.length - 1].replace("#", ""));
-                return new SurfaceCurve(name, curve, items, representation,lineNumber);
+                return new SurfaceCurve(name, (Curve) curve, items, representation,lineNumber);
             }
 
             default -> {

@@ -50,6 +50,7 @@ public class FaceBound extends StepShapes {
     @Override
     public TreeItem<StepShapes> getTreeItem() {
         TreeItem<StepShapes> treeItem = new TreeItem<>(this);
+        //treeItem.getChildren().add(faceLoop.getTreeItem());
         for(Edge cartesianPoint : this.edgeLoop.getOrientedEdges()){
             treeItem.getChildren().add(cartesianPoint.getTreeItem());
         }

@@ -2,7 +2,10 @@ package ch.dcreations.apviewer.Step3DModel.StepShapes.Face;
 
 import ch.dcreations.apviewer.Step3DModel.StepShapes.AP242Code;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.FaceBound;
+import ch.dcreations.apviewer.Step3DModel.StepShapes.StepShapes;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Surfaces.Surface;
+import javafx.scene.control.TreeItem;
+
 import java.util.Set;
 
 public class FaceSurface extends Face {
@@ -16,5 +19,15 @@ public class FaceSurface extends Face {
         super(name, faceBounds,lineNumber,ap242Code);
         this.faceGeometrie = faceGeometrie;
         this.sameSense = sameSense;
+    }
+
+    @Override
+    public TreeItem<StepShapes> getTreeItem() {
+        TreeItem<StepShapes> treeItem = new TreeItem<>(this);
+        treeItem.getChildren().add(faceGeometrie.getTreeItem());
+        for (FaceBound faceBound : FaceBound){
+            treeItem.getChildren().add(faceBound.getTreeItem());
+        }
+        return treeItem;
     }
 }

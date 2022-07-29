@@ -12,4 +12,7 @@ public class Direction extends StepShapes {
         this.directionRatios.addAll(directionRatios);
     }
 
+    public List<Double> getDirectionRatios() {
+        return directionRatios;
+    }
 }
