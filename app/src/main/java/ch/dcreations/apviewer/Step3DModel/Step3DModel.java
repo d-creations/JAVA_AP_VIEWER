@@ -1,5 +1,6 @@
 package ch.dcreations.apviewer.Step3DModel;
 
+import ch.dcreations.apviewer.Step3DModel.Config.StepConfig;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.ConnectedFaceSet.ClosedShell;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.StepShapes;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.StepText;
@@ -9,7 +10,16 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.*;
 import java.io.*;
 import java.util.*;
-
+/**
+ * <p>
+ * <p>
+ * Main Class of the Step Model  Contains the Sep Objects
+ * <p>
+ *
+ * @author Damian www.d-creations.org
+ * @version 1.0
+ * @since 2022-07-31
+ */
 public class Step3DModel {
 
     String data = "";
@@ -24,10 +34,19 @@ public class Step3DModel {
     AP242Decoder ap242Decoder;
     String header = "";
 
+    /**
+     * Constructor
+     * @param name name of The Model
+     */
     public Step3DModel(String name) {
         this.name = name;
     }
 
+    /**
+     * Phrases the text file  it haves to be a Step file
+     * @param reader {@link Reader} reader how contains the File
+     * @throws IOException if it files can not be reed
+     */
     public void parseTheFile(Reader reader) throws IOException {
         colorsList.add(Color.BLUE);
         colorsList.add(Color.BLUEVIOLET);
@@ -35,7 +54,7 @@ public class Step3DModel {
         colorsList.add(Color.GREENYELLOW);
         StringBuilder readData = new StringBuilder();
         int charValue;
-        System.out.println("The Drawing From Damian ");
+        StepConfig.printMessage("The Drawing From Damian ");
         do {
             charValue = reader.read(); // read next char from file
             readData.append((char)charValue);

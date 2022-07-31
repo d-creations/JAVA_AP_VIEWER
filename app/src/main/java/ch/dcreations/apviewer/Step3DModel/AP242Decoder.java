@@ -1,5 +1,6 @@
 package ch.dcreations.apviewer.Step3DModel;
 
+import ch.dcreations.apviewer.Step3DModel.Config.StepConfig;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.*;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.ConnectedFaceSet.ClosedShell;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Curve.Conic.Circle;
@@ -24,21 +25,35 @@ import ch.dcreations.apviewer.Step3DModel.StepShapes.Surfaces.Surface;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Vertex.SimpleVertexD;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Vertex.Vertex;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Vertex.VertexPoint;
-
 import java.util.*;
+
+/**
+ * <p>
+ * <p>
+ * The Decoder   reads each Line of the Step file and decode it
+ * <p>
+ *
+ * @author Damian www.d-creations.org
+ * @version 1.0
+ * @since 2022-07-31
+ */
 
 public class AP242Decoder {
     Map<Integer, String> dataMap;
     List<StepShapes> stepShapes = new ArrayList<>();
     List<ClosedShell> drawingShells = new ArrayList<>();
 
+    /**
+     * But a Map with the #-- Code of the Step File and the Data behind e
+     * @param dataMap Map with the Code Nummber and the Data of the Code
+     */
     public AP242Decoder(Map<Integer, String> dataMap) {
         this.dataMap = dataMap;
     }
 
     public void decode() {
         dataMap.keySet().stream().filter( k ->(decodeKey(dataMap.get(k))[0].equals("SHAPE_DEFINITION_REPRESENTATION"))).forEach(k -> calculateDecoding(dataMap.get(k),k));
-        System.out.println("END");
+        StepConfig.printMessage("END");
     }
 
     private String[] decodeKey(String value) {
@@ -144,7 +159,7 @@ public class AP242Decoder {
                 try {
                     return new Axis2Placement3D(name, (CartesianPoint) calculateDecoding(location,locationNameNumber), (Direction) calculateDecoding(axis1,axisLineNumber),(Direction) calculateDecoding(refDirection,refDirectionNumber),lineNumber);
                 } catch (Exception e) {
-                    System.err.println("AXIS2_PLACEMENT_3D parrameter Error");
+                    StepConfig.printError("AXIS2_PLACEMENT_3D parrameter Error");
                     return null;
                 }
             }
@@ -167,8 +182,8 @@ public class AP242Decoder {
                     drawingShells.add(closedShell);
                     return closedShell;
                 }catch (Exception e) {
-                    System.err.println("CLOSED_SHELL ERROR");
-                    System.err.println(e.getMessage());
+                    StepConfig.printError("CLOSED_SHELL ERROR");
+                    StepConfig.printError(e.getMessage());
                     return null;
                 }
             }
@@ -179,8 +194,8 @@ public class AP242Decoder {
                     Surface faceGeometrie = (Surface) calculateDecoding(code,codeNumber);
                     Boolean sameSense = !Objects.equals(numbers[numbers.length - 1], ".F.");
                     return new AdvancedFace(name, getItemsSet(numbers, FaceBound.class), faceGeometrie, sameSense,lineNumber);
-                } catch (Exception e) {System.err.println("ADVANCED FACE faceGemetrie was not a Surface"+code + codeNumber);
-                    System.err.println(e.getMessage());
+                } catch (Exception e) {StepConfig.printError("ADVANCED FACE faceGemetrie was not a Surface"+code + codeNumber);
+                    StepConfig.printError(e.getMessage());
                     return null;
                 }
             }
@@ -192,8 +207,8 @@ public class AP242Decoder {
                     Boolean orientation = !Objects.equals(numbers[numbers.length - 1], ".F.");
                     return new FaceBound(name, faceLoop, orientation,lineNumber);
                 } catch (Exception e) {
-                    System.err.println("FaceBound failed");
-                    System.err.println(e.getMessage());
+                    StepConfig.printError("FaceBound failed");
+                    StepConfig.printError(e.getMessage());
                     return null;
                 }
             }
@@ -205,8 +220,8 @@ public class AP242Decoder {
                     Boolean orientation = !Objects.equals(numbers[numbers.length - 1], ".F.");
                     return new FaceOuterBound(name, faceLoop, orientation,lineNumber);
                 } catch (Exception e) {
-                    System.err.println("FaceOuterBound failed");
-                    System.err.println(e.getMessage());
+                    StepConfig.printError("FaceOuterBound failed");
+                    StepConfig.printError(e.getMessage());
                     return null;
                 }
             }
@@ -214,8 +229,8 @@ public class AP242Decoder {
                 try {
                 return new EdgeLoop(name,getFacesSet(numbers),lineNumber);
             } catch (Exception e) {
-                System.err.println("EDGE_LOOP failed");
-                System.err.println(e.getMessage());
+                StepConfig.printError("EDGE_LOOP failed");
+                StepConfig.printError(e.getMessage());
                 return null;
             }
             }
@@ -229,7 +244,7 @@ public class AP242Decoder {
                     Boolean orientation = !Objects.equals(numbers[numbers.length - 1], ".F.");
                     return new OrientedEdge(name, new SimpleVertexD(edgeStart,lineNumber), new SimpleVertexD(edgeEnd,lineNumber), edgeElement, orientation,lineNumber);
                 } catch (Exception e) {
-                    System.err.println("ORIENTATED EDGE Vertex or EdgeElement was Wrong" + "Exeption" + e.getMessage());
+                    StepConfig.printError("ORIENTATED EDGE Vertex or EdgeElement was Wrong" + "Exeption" + e.getMessage());
                     return null;
                 }
             }
@@ -251,7 +266,7 @@ public class AP242Decoder {
                         return new EdgeCurve(name, edgeStart, edgeEnd, edgeGeometrie, sameSense, lineNumber);
                     }
                     } catch (Exception e) {
-                    System.err.println("PLANE position was not a Position");
+                    StepConfig.printError("PLANE position was not a Position");
                     return null;
                 }
             }
@@ -266,7 +281,7 @@ public class AP242Decoder {
                         return new VertexPoint(name, (CartesianPoint) calculateDecoding(code,codeNumber),lineNumber);
                     throw new IllegalArgumentException(" Point ");
                 } catch (Exception e) {
-                    System.err.println("PLANE position was not a Position");
+                    StepConfig.printError("PLANE position was not a Position");
                     return null;
                 }
             }
@@ -293,7 +308,7 @@ public class AP242Decoder {
                     Axis2Placement3D position = (Axis2Placement3D) calculateDecoding(code,codeLineNumber);//vertex
                     return new Plane(name, position,lineNumber);
                 } catch (Exception e) {
-                    System.err.println("PLANE position was not a Position");
+                    StepConfig.printError("PLANE position was not a Position");
                     return null;
                 }
             }
@@ -305,8 +320,8 @@ public class AP242Decoder {
                     Axis2Placement3D position = (Axis2Placement3D) calculateDecoding(PositionCode,PositionCodeLineNumber);//vertex
                     return new SphericalSurface(name, position,radius,lineNumber);
                 } catch (Exception e) {
-                    System.err.println("SPHERICAL SURFACE CUNSTRUCTION FAILD Construction Failed");
-                    System.err.println(e.getMessage());
+                    StepConfig.printError("SPHERICAL SURFACE CUNSTRUCTION FAILD Construction Failed");
+                    StepConfig.printError(e.getMessage());
                     return null;
                 }
             }
@@ -319,8 +334,8 @@ public class AP242Decoder {
                     Axis2Placement3D position = (Axis2Placement3D) calculateDecoding(PositionCode,PositionCodeLineNumber);//vertex
                     return new CylindricalSurface(name, position,radius,lineNumber);
                 } catch (Exception e) {
-                    System.err.println("Cylindrical Construction Failed");
-                    System.err.println(e.getMessage());
+                    StepConfig.printError("Cylindrical Construction Failed");
+                    StepConfig.printError(e.getMessage());
                     return null;
                 }
             }
@@ -333,8 +348,8 @@ public class AP242Decoder {
                     Axis2Placement3D position = (Axis2Placement3D) calculateDecoding(PositionCode,PositionCodeLineNumber);//vertex
                     return new Circle(name, position,radius,lineNumber);
                 } catch (Exception e) {
-                    System.err.println("CIRCLE Construction Failed");
-                    System.err.println(e.getMessage());
+                    StepConfig.printError("CIRCLE Construction Failed");
+                    StepConfig.printError(e.getMessage());
                     return null;
                 }
             }
@@ -383,7 +398,7 @@ public class AP242Decoder {
             }
 
             default -> {
-                System.err.println("CODE NOT FOUND" + value+ lineNumber);
+                StepConfig.printError("CODE NOT FOUND" + value+ lineNumber);
                 return null;
             }
         }
@@ -412,7 +427,7 @@ public class AP242Decoder {
             if (true) {
                 items.add((T) calculateDecoding(code,codeLineNumber));
             } else {
-                System.err.println("Get ITMENSSET");
+                StepConfig.printError("Get ITMENSSET");
                 throw new IllegalArgumentException("At get Items object Type " + calculateDecoding(code,codeLineNumber).getClass() + " does not have same Type like T" + obj.getClass());
             }
         }

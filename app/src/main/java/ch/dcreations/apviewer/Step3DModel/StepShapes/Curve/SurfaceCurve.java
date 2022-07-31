@@ -1,22 +1,42 @@
 package ch.dcreations.apviewer.Step3DModel.StepShapes.Curve;
 
+import ch.dcreations.apviewer.Step3DModel.Config.StepConfig;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.*;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Curve.Conic.Circle;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Point.CartasianAxisE;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Point.CartesianPoint;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Vertex.VertexPoint;
 import javafx.scene.control.TreeItem;
-
 import java.util.List;
 import java.util.Set;
-
 import static ch.dcreations.apviewer.Step3DModel.Config.StepConfig.CIRCALRESOLUTION;
+
+
+/**
+ * <p>
+ * <p>
+ *  Step object Surface Geometric a subclass of {@link Curve}
+ * <p>
+ *
+ * @author Damian www.d-creations.org
+ * @version 1.0
+ * @since 2022-07-31
+ */
 
 public class SurfaceCurve extends Curve {
     protected Curve curve;
     protected Set<StepShapes> items;
     protected PreferredSurfaceCurveRepresentation representation;
 
+    /**
+     * Constructor of a Surface Curve
+     * @param name name of the Surface Curve
+     * @param curve 3d Curve
+     * @param items a {@link Set} of {@link StepShapes}
+     * @param representation is the {@link PreferredSurfaceCurveRepresentation}
+     * @param ap242Code {@link AP242Code} Step Code
+     * @param lineNumber line number in the Step File
+     */
     public SurfaceCurve(String name, Curve curve, Set<StepShapes> items, PreferredSurfaceCurveRepresentation representation, AP242Code ap242Code, int lineNumber) {
         super(name, lineNumber, ap242Code);
         this.curve = curve;
@@ -24,6 +44,14 @@ public class SurfaceCurve extends Curve {
         this.representation = representation;
     }
 
+    /**
+     * Constructor of a Surface Curve
+     * @param name name of the Surface Curve
+     * @param curve 3d Curve
+     * @param items a {@link Set} of {@link StepShapes}
+     * @param representation is the {@link PreferredSurfaceCurveRepresentation}
+     * @param lineNumber line number in the Step File
+     */
     public SurfaceCurve(String name, Curve curve, Set<StepShapes> items, PreferredSurfaceCurveRepresentation representation, int lineNumber) {
         this(name, curve, items, representation, AP242Code.SURFACE_CURVE, lineNumber);
     }
@@ -38,14 +66,19 @@ public class SurfaceCurve extends Curve {
     }
 
 
+    /**
+     * Calculates the Line Geometrie
+     * @param start Start Point of the Geometric
+     * @param end End Point of the Geometrie
+     */
     private void calculateLineGeometrie(VertexPoint start, VertexPoint end) {
-        System.out.println("Line Geometrie");
+        StepConfig.printMessage("Line Geometrie");
         this.edgeDrawingPoints.add(new IncrementalPointsD(end.ifExistGivePoint().getPoint().get(CartasianAxisE.X), end.ifExistGivePoint().getPoint().get(CartasianAxisE.Y), end.ifExistGivePoint().getPoint().get(CartasianAxisE.Z)));
 
     }
 
     private void calculateCurveGeometrie(VertexPoint start, VertexPoint end) {
-        System.out.println("circle geometrie");
+        StepConfig.printMessage("circle geometrie");
         try {
             Circle circle = (Circle) curve;
             Axis2Placement3D position = circle.getPosition();
@@ -72,22 +105,19 @@ public class SurfaceCurve extends Curve {
                 double yBasisN = y * firstDirectionE.getDirectionRatios().get(1) + x * secondDirectionE.getDirectionRatios().get(1) + z * axis.getDirectionRatios().get(1);
                 double xBasisN = y * firstDirectionE.getDirectionRatios().get(0) + x * secondDirectionE.getDirectionRatios().get(0) + z * axis.getDirectionRatios().get(0);
                 double zBasisN = y * firstDirectionE.getDirectionRatios().get(2) + x * secondDirectionE.getDirectionRatios().get(2) + z * axis.getDirectionRatios().get(2);
-                ;
-                // Calculate Distance the nuew Point Distance to Endpoint
-                DistanceToEndPoint = Math.sqrt((-xBasisN + endXBasisN) * (-xBasisN + endXBasisN) + (-yBasisN + endYBasisN) * (-yBasisN + endYBasisN) + (-zBasisN + endZBasisN) * (-zBasisN + endZBasisN));
 
                 xBasisN += middlePoint.getPoint().get(CartasianAxisE.X);
                 yBasisN += middlePoint.getPoint().get(CartasianAxisE.Y);
                 zBasisN += middlePoint.getPoint().get(CartasianAxisE.Z);
                 this.edgeDrawingPoints.add(new IncrementalPointsD(xBasisN, yBasisN, zBasisN));
 
-                // Calculate Distance the nuew Point Distance to Endpoint
+                // Calculate Distance the new Point Distance to Endpoint
                 DistanceToEndPoint = Math.sqrt((-xBasisN + endXBasisN) * (-xBasisN + endXBasisN) + (-yBasisN + endYBasisN) * (-yBasisN + endYBasisN) + (-zBasisN + endZBasisN) * (-zBasisN + endZBasisN));
                 i += CIRCALRESOLUTION;
             }
         } catch (Exception e) {
-            System.out.println(" Could not draw the Points ");
-            System.out.println(e.getMessage());
+            StepConfig.printMessage(" Could not draw the Points ");
+            StepConfig.printMessage(e.getMessage());
         }
     }
 
