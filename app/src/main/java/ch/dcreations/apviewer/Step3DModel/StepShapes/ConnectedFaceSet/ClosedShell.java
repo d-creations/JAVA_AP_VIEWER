@@ -1,9 +1,7 @@
 package ch.dcreations.apviewer.Step3DModel.StepShapes.ConnectedFaceSet;
 
 import ch.dcreations.apviewer.Step3DModel.StepShapes.AP242Code;
-import ch.dcreations.apviewer.Step3DModel.StepShapes.Face.AdvancedFace;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Face.Face;
-import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.FaceBound;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Point.CartasianAxisE;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Point.CartesianPoint;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.StepShapes;
@@ -12,11 +10,27 @@ import javafx.collections.ObservableFloatArray;
 import javafx.collections.ObservableIntegerArray;
 import javafx.scene.control.TreeItem;
 import javafx.scene.shape.*;
-
 import java.util.*;
+
+/**
+ * <p>
+ * <p>
+ * This contains a Closed Shell as a MeshView {@link MeshView} and implements the {@link ConnectedFaceSet}
+ * <p>
+ *
+ * @author Damian www.d-creations.org
+ * @version 1.0
+ * @since 2022-07-31
+ */
 
 public class ClosedShell extends ConnectedFaceSet {
 
+    /**
+     *
+     * @param name Name of the Closed Shell
+     * @param setOfFaces a {@link Set} of faces
+     * @param lineNumber the linenumber in the Step-file
+     */
     public ClosedShell(String name, Set<Face> setOfFaces,int lineNumber) {
         super(name,setOfFaces,lineNumber,AP242Code.CLOSED_SHELL);
         this.mesh = createMesh(setOfFaces);
@@ -24,8 +38,13 @@ public class ClosedShell extends ConnectedFaceSet {
 
 
 
-    private Mesh mesh;
+    private final Mesh mesh;
 
+    /**
+     * creats a Meshview with a set of Faces
+     * @param setOfFaces a {@link Set} of Faces {@link Face}
+     * @return
+     */
     private Mesh createMesh(Set<Face> setOfFaces){
         TriangleMesh mesh = new TriangleMesh(VertexFormat.POINT_TEXCOORD);
         ObservableFloatArray vertexArray = FXCollections.observableFloatArray();
@@ -44,7 +63,6 @@ public class ClosedShell extends ConnectedFaceSet {
             }
         }
         int i=0;
-        int y=0;
         for (int k = 0;k<axis.size();k = k+9) {
             vertexArray.addAll(axis.get(k).floatValue(),axis.get(k+1).floatValue(),axis.get(k+2).floatValue());
             vertexArray.addAll(axis.get(k+3).floatValue(),axis.get(k+4).floatValue(),axis.get(k+5).floatValue());
@@ -55,7 +73,6 @@ public class ClosedShell extends ConnectedFaceSet {
             facesArray.addAll(i, 0);
             facesArray.addAll(i + 1, 0);
             facesArray.addAll(i + 2, 0);
-            y++;
             i = i+3;
         }
 
@@ -70,6 +87,7 @@ public class ClosedShell extends ConnectedFaceSet {
         );
         return mesh;
     }
+
 
     public Mesh getMeshView() {
         return this.mesh;

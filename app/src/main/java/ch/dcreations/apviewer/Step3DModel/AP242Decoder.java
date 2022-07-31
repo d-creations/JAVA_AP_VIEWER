@@ -1,5 +1,6 @@
 package ch.dcreations.apviewer.Step3DModel;
 
+import ch.dcreations.apviewer.Step3DModel.Config.StepConfig;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.*;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.ConnectedFaceSet.ClosedShell;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Curve.Conic.Circle;
@@ -7,7 +8,6 @@ import ch.dcreations.apviewer.Step3DModel.StepShapes.Curve.StepLine;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Curve.Curve;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Curve.SeamCurve;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Curve.SurfaceCurve;
-import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.Edge.Edge;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.Edge.EdgeCurve;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.Edge.OrientedEdge;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Face.AdvancedFace;
@@ -16,7 +16,6 @@ import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.EdgeLoop;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.FaceBound;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.FaceBoundLoop.FaceOuterBound;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Point.CartesianPoint;
-import ch.dcreations.apviewer.Step3DModel.StepShapes.Point.Point;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.ProductDefinitionFormat.ProductDefinitionFormation;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.ProductDefinitionFormat.ProductDefinitionFormationWithSpecifiedSource;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Surfaces.CylindricalSurface;
@@ -26,21 +25,35 @@ import ch.dcreations.apviewer.Step3DModel.StepShapes.Surfaces.Surface;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Vertex.SimpleVertexD;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Vertex.Vertex;
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Vertex.VertexPoint;
-
 import java.util.*;
+
+/**
+ * <p>
+ * <p>
+ * The Decoder   reads each Line of the Step file and decode it
+ * <p>
+ *
+ * @author Damian www.d-creations.org
+ * @version 1.0
+ * @since 2022-07-31
+ */
 
 public class AP242Decoder {
     Map<Integer, String> dataMap;
     List<StepShapes> stepShapes = new ArrayList<>();
     List<ClosedShell> drawingShells = new ArrayList<>();
 
+    /**
+     * But a Map with the #-- Code of the Step File and the Data behind e
+     * @param dataMap Map with the Code Nummber and the Data of the Code
+     */
     public AP242Decoder(Map<Integer, String> dataMap) {
         this.dataMap = dataMap;
     }
 
     public void decode() {
         dataMap.keySet().stream().filter( k ->(decodeKey(dataMap.get(k))[0].equals("SHAPE_DEFINITION_REPRESENTATION"))).forEach(k -> calculateDecoding(dataMap.get(k),k));
-        System.out.println("END");
+        StepConfig.printMessage("END");
     }
 
     private String[] decodeKey(String value) {
@@ -65,8 +78,8 @@ public class AP242Decoder {
         String name = numbers[0].replace("\"","");
         switch (topCode) {
             case "SHAPE_DEFINITION_REPRESENTATION" -> {
-                int number1 = Integer.valueOf(numbers[0].replace("#", ""));
-                int number2 = Integer.valueOf(numbers[1].replace("#", ""));
+                int number1 = Integer.parseInt(numbers[0].replace("#", ""));
+                int number2 = Integer.parseInt(numbers[1].replace("#", ""));
                 String code1 = dataMap.get(number1);
                 String code2 = dataMap.get(number2);
                 ShapeDefinitionRepesentation s = new ShapeDefinitionRepesentation(calculateDecoding(code1,number1), calculateDecoding(code2,number2),lineNumber);
@@ -74,11 +87,11 @@ public class AP242Decoder {
                 return s;
             }
             case "ADVANCED_BREP_SHAPE_REPRESENTATION" -> {
-                int number1 = Integer.valueOf(numbers[numbers.length - 1].replace("#", ""));
+                int number1 = Integer.parseInt(numbers[numbers.length - 1].replace("#", ""));
                 String code1 = dataMap.get(number1);
                 Set<StepShapes> items = new HashSet<>();
                 for (int i = 1; i < numbers.length - 1; i++) {
-                    int number = Integer.valueOf(numbers[i].replace("#", "").replace("(", "").replace(")", ""));
+                    int number = Integer.parseInt(numbers[i].replace("#", "").replace("(", "").replace(")", ""));
                     String code = dataMap.get(number);
                     items.add(calculateDecoding(code,number));
                 }
@@ -86,14 +99,14 @@ public class AP242Decoder {
             }
             case "PRODUCT_DEFINITION_SHAPE" -> {
                 String description = numbers[1];
-                int codeLineNumber = Integer.valueOf(numbers[2].replace("#", ""));
+                int codeLineNumber = Integer.parseInt(numbers[2].replace("#", ""));
                 String code1 = dataMap.get(codeLineNumber);
                 return new ProductDefinitionShape(name, description, calculateDecoding(code1,codeLineNumber),lineNumber);
             }
             case "PRODUCT_DEFINITION" -> {
                 String description = numbers[1];
-                int code1LineNumber = Integer.valueOf(numbers[2].replace("#", ""));
-                int code2LineNumber =  Integer.valueOf(numbers[3].replace("#", ""));
+                int code1LineNumber = Integer.parseInt(numbers[2].replace("#", ""));
+                int code2LineNumber =  Integer.parseInt(numbers[3].replace("#", ""));
                 String code1 = dataMap.get(code1LineNumber);
                 String code2 = dataMap.get(code2LineNumber);
                 return new ProductDefinition(name, description, calculateDecoding(code1,code1LineNumber), calculateDecoding(code2,code2LineNumber),lineNumber);
@@ -102,7 +115,7 @@ public class AP242Decoder {
                 String id = numbers[0];
                 name = numbers[1];
                 String description = numbers[2];
-                int code1LineNumber  =  Integer.valueOf(numbers[3].replace("#", "").replace("(", "").replace(")", ""));
+                int code1LineNumber  =  Integer.parseInt(numbers[3].replace("#", "").replace("(", "").replace(")", ""));
                 String code1 = dataMap.get(code1LineNumber);
                 Set<StepShapes> frameSet = new HashSet<>();
                 calculateDecoding(code1,code1LineNumber);
@@ -110,26 +123,26 @@ public class AP242Decoder {
             }
             case "PRODUCT_DEFINITION_FORMATION" -> {
                 String description = numbers[1];
-                int code1LineNumber = Integer.valueOf(numbers[2].replace("#", ""));
+                int code1LineNumber = Integer.parseInt(numbers[2].replace("#", ""));
                 String code1 = dataMap.get(code1LineNumber);
                 return new ProductDefinitionFormation(name, description, calculateDecoding(code1,code1LineNumber),lineNumber);
             }
             case "PRODUCT_DEFINITION_FORMATION_WITH_SPECIFIED_SOURCE" -> {
                 String description = numbers[1];
-                int code1LineNumber = Integer.valueOf(numbers[2].replace("#", ""));
+                int code1LineNumber = Integer.parseInt(numbers[2].replace("#", ""));
                 String source = numbers[3];
                 String code1 = dataMap.get(code1LineNumber);
                 return new ProductDefinitionFormationWithSpecifiedSource(name, description, calculateDecoding(code1,code1LineNumber),source,lineNumber);
             }
             case "PRODUCT_DEFINITION_CONTEXT" -> {
                 String disciplineType = numbers[2];
-                int code1LineNumber = Integer.valueOf(numbers[1].replace("#", ""));
+                int code1LineNumber = Integer.parseInt(numbers[1].replace("#", ""));
                 String code1 = dataMap.get(code1LineNumber);
                 return new ProductDefinitionContext(name, calculateDecoding(code1,code1LineNumber), disciplineType,lineNumber);
             }
             case "PRODUCT_CONTEXT" -> {
                 String disciplineType = numbers[2];
-                int code1LineNumber = Integer.valueOf(numbers[1].replace("#", ""));
+                int code1LineNumber = Integer.parseInt(numbers[1].replace("#", ""));
                 String code1 = dataMap.get(code1LineNumber);
                 return new ProductContext(name, calculateDecoding(code1,code1LineNumber), disciplineType,lineNumber);
             }
@@ -137,16 +150,16 @@ public class AP242Decoder {
                 return new ApplicationContext(name,lineNumber);
             }
             case "AXIS2_PLACEMENT_3D" -> {
-                int locationNameNumber = Integer.valueOf(numbers[1].replace("#", ""));
-                int axisLineNumber = Integer.valueOf(numbers[2].replace("#", ""));
-                int refDirectionNumber = Integer.valueOf(numbers[3].replace("#", ""));
+                int locationNameNumber = Integer.parseInt(numbers[1].replace("#", ""));
+                int axisLineNumber = Integer.parseInt(numbers[2].replace("#", ""));
+                int refDirectionNumber = Integer.parseInt(numbers[3].replace("#", ""));
                 String location = dataMap.get(locationNameNumber);
                 String axis1 = dataMap.get(axisLineNumber);
                 String refDirection = dataMap.get(refDirectionNumber);
                 try {
                     return new Axis2Placement3D(name, (CartesianPoint) calculateDecoding(location,locationNameNumber), (Direction) calculateDecoding(axis1,axisLineNumber),(Direction) calculateDecoding(refDirection,refDirectionNumber),lineNumber);
                 } catch (Exception e) {
-                    System.err.println("AXIS2_PLACEMENT_3D parrameter Error");
+                    StepConfig.printError("AXIS2_PLACEMENT_3D parrameter Error");
                     return null;
                 }
             }
@@ -154,7 +167,7 @@ public class AP242Decoder {
                 return new CartesianPoint(name, directionRaitiosToList(numbers),lineNumber);
             }
             case "MANIFOLD_SOLID_BREP" -> {
-                int shapeLineNumber = Integer.valueOf(numbers[1].replace("#", ""));
+                int shapeLineNumber = Integer.parseInt(numbers[1].replace("#", ""));
                 String shapeData = dataMap.get(shapeLineNumber);
                 return new MainfoldSolidBrep(name, calculateDecoding(shapeData,shapeLineNumber),lineNumber);
             }
@@ -169,46 +182,46 @@ public class AP242Decoder {
                     drawingShells.add(closedShell);
                     return closedShell;
                 }catch (Exception e) {
-                    System.err.println("CLOSED_SHELL ERROR");
-                    System.err.println(e.getMessage());
+                    StepConfig.printError("CLOSED_SHELL ERROR");
+                    StepConfig.printError(e.getMessage());
                     return null;
                 }
             }
             case "ADVANCED_FACE" -> {
-                int codeNumber = Integer.valueOf(numbers[numbers.length - 2].replace("#", "").replace("(", "").replace(")", ""));
+                int codeNumber = Integer.parseInt(numbers[numbers.length - 2].replace("#", "").replace("(", "").replace(")", ""));
                 String code = dataMap.get(codeNumber);
                 try {
                     Surface faceGeometrie = (Surface) calculateDecoding(code,codeNumber);
                     Boolean sameSense = !Objects.equals(numbers[numbers.length - 1], ".F.");
                     return new AdvancedFace(name, getItemsSet(numbers, FaceBound.class), faceGeometrie, sameSense,lineNumber);
-                } catch (Exception e) {System.err.println("ADVANCED FACE faceGemetrie was not a Surface"+code + codeNumber);
-                    System.err.println(e.getMessage());
+                } catch (Exception e) {StepConfig.printError("ADVANCED FACE faceGemetrie was not a Surface"+code + codeNumber);
+                    StepConfig.printError(e.getMessage());
                     return null;
                 }
             }
             case "FACE_BOUND" -> {
                 try {
-                    int codeNumber = Integer.valueOf(numbers[1].replace("#", ""));
+                    int codeNumber = Integer.parseInt(numbers[1].replace("#", ""));
                     String code = dataMap.get(codeNumber);
                     EdgeLoop faceLoop = (EdgeLoop)calculateDecoding(code,codeNumber);
                     Boolean orientation = !Objects.equals(numbers[numbers.length - 1], ".F.");
                     return new FaceBound(name, faceLoop, orientation,lineNumber);
                 } catch (Exception e) {
-                    System.err.println("FaceBound failed");
-                    System.err.println(e.getMessage());
+                    StepConfig.printError("FaceBound failed");
+                    StepConfig.printError(e.getMessage());
                     return null;
                 }
             }
             case "FACE_OUTER_BOUND" -> {
                 try {
-                    int codeNumber = Integer.valueOf(numbers[1].replace("#", ""));
+                    int codeNumber = Integer.parseInt(numbers[1].replace("#", ""));
                     String code = dataMap.get(codeNumber);
                     EdgeLoop faceLoop = (EdgeLoop)calculateDecoding(code,codeNumber);
                     Boolean orientation = !Objects.equals(numbers[numbers.length - 1], ".F.");
                     return new FaceOuterBound(name, faceLoop, orientation,lineNumber);
                 } catch (Exception e) {
-                    System.err.println("FaceOuterBound failed");
-                    System.err.println(e.getMessage());
+                    StepConfig.printError("FaceOuterBound failed");
+                    StepConfig.printError(e.getMessage());
                     return null;
                 }
             }
@@ -216,8 +229,8 @@ public class AP242Decoder {
                 try {
                 return new EdgeLoop(name,getFacesSet(numbers),lineNumber);
             } catch (Exception e) {
-                System.err.println("EDGE_LOOP failed");
-                System.err.println(e.getMessage());
+                StepConfig.printError("EDGE_LOOP failed");
+                StepConfig.printError(e.getMessage());
                 return null;
             }
             }
@@ -225,34 +238,35 @@ public class AP242Decoder {
                 try {
                     String edgeStart = numbers[1];
                     String edgeEnd = numbers[2];
-                    int codeNumber = Integer.valueOf(numbers[3].replace("#", ""));
+                    int codeNumber = Integer.parseInt(numbers[3].replace("#", ""));
                     String code = dataMap.get(codeNumber);
                     EdgeCurve edgeElement = (EdgeCurve) calculateDecoding(code,codeNumber);
                     Boolean orientation = !Objects.equals(numbers[numbers.length - 1], ".F.");
                     return new OrientedEdge(name, new SimpleVertexD(edgeStart,lineNumber), new SimpleVertexD(edgeEnd,lineNumber), edgeElement, orientation,lineNumber);
                 } catch (Exception e) {
-                    System.err.println("ORIENTATED EDGE Vertex or EdgeElement was Wrong" + "Exeption" + e.getMessage());
+                    StepConfig.printError("ORIENTATED EDGE Vertex or EdgeElement was Wrong" + "Exeption" + e.getMessage());
                     return null;
                 }
             }
             case "EDGE_CURVE" -> {
                 try {
-                    int code1LineNumber = Integer.valueOf(numbers[1].replace("#", ""));
-                    int code2LineNumber = Integer.valueOf(numbers[2].replace("#", ""));
-                    int code3LineNumber = Integer.valueOf(numbers[3].replace("#", ""));
+                    int code1LineNumber = Integer.parseInt(numbers[1].replace("#", ""));
+                    int code2LineNumber = Integer.parseInt(numbers[2].replace("#", ""));
+                    int code3LineNumber = Integer.parseInt(numbers[3].replace("#", ""));
                     String code1 = dataMap.get(code1LineNumber);
                     String code2 = dataMap.get(code2LineNumber);
                     String code3 = dataMap.get(code3LineNumber);
                     Vertex edgeStart = (Vertex) calculateDecoding(code1,code1LineNumber);//vertex
                     Vertex edgeEnd = (Vertex) calculateDecoding(code2,code2LineNumber);//vertex
                     Curve edgeGeometrie = (Curve) calculateDecoding(code3,code3LineNumber);//vertex
-                    Boolean sameSense = numbers[numbers.length - 1] != ".F.";
-                    if (edgeStart.getTyp() == AP242Code.VERTEX_POINT && edgeEnd.getTyp() == AP242Code.VERTEX_POINT) {
+                    Boolean sameSense = !Objects.equals(numbers[numbers.length - 1], ".F.");
+                    if ((edgeStart.getTyp() != null && edgeEnd.getTyp()!= null)&& (edgeStart.getTyp() == AP242Code.VERTEX_POINT && edgeEnd.getTyp() == AP242Code.VERTEX_POINT)) {
                         return new EdgeCurve(name, (VertexPoint) calculateDecoding(code1,code1LineNumber), (VertexPoint) calculateDecoding(code2,code2LineNumber), edgeGeometrie, sameSense,lineNumber);
+                    }else {
+                        return new EdgeCurve(name, edgeStart, edgeEnd, edgeGeometrie, sameSense, lineNumber);
                     }
-                    return new EdgeCurve(name, edgeStart, edgeEnd, edgeGeometrie, sameSense,lineNumber);
-                } catch (Exception e) {
-                    System.err.println("PLANE position was not a Position");
+                    } catch (Exception e) {
+                    StepConfig.printError("PLANE position was not a Position");
                     return null;
                 }
             }
@@ -267,7 +281,7 @@ public class AP242Decoder {
                         return new VertexPoint(name, (CartesianPoint) calculateDecoding(code,codeNumber),lineNumber);
                     throw new IllegalArgumentException(" Point ");
                 } catch (Exception e) {
-                    System.err.println("PLANE position was not a Position");
+                    StepConfig.printError("PLANE position was not a Position");
                     return null;
                 }
             }
@@ -294,7 +308,7 @@ public class AP242Decoder {
                     Axis2Placement3D position = (Axis2Placement3D) calculateDecoding(code,codeLineNumber);//vertex
                     return new Plane(name, position,lineNumber);
                 } catch (Exception e) {
-                    System.err.println("PLANE position was not a Position");
+                    StepConfig.printError("PLANE position was not a Position");
                     return null;
                 }
             }
@@ -306,8 +320,8 @@ public class AP242Decoder {
                     Axis2Placement3D position = (Axis2Placement3D) calculateDecoding(PositionCode,PositionCodeLineNumber);//vertex
                     return new SphericalSurface(name, position,radius,lineNumber);
                 } catch (Exception e) {
-                    System.err.println("SPHERICAL SURFACE CUNSTRUCTION FAILD Construction Failed");
-                    System.err.println(e.getMessage());
+                    StepConfig.printError("SPHERICAL SURFACE CUNSTRUCTION FAILD Construction Failed");
+                    StepConfig.printError(e.getMessage());
                     return null;
                 }
             }
@@ -320,8 +334,8 @@ public class AP242Decoder {
                     Axis2Placement3D position = (Axis2Placement3D) calculateDecoding(PositionCode,PositionCodeLineNumber);//vertex
                     return new CylindricalSurface(name, position,radius,lineNumber);
                 } catch (Exception e) {
-                    System.err.println("Cylindrical Construction Failed");
-                    System.err.println(e.getMessage());
+                    StepConfig.printError("Cylindrical Construction Failed");
+                    StepConfig.printError(e.getMessage());
                     return null;
                 }
             }
@@ -334,8 +348,8 @@ public class AP242Decoder {
                     Axis2Placement3D position = (Axis2Placement3D) calculateDecoding(PositionCode,PositionCodeLineNumber);//vertex
                     return new Circle(name, position,radius,lineNumber);
                 } catch (Exception e) {
-                    System.err.println("CIRCLE Construction Failed");
-                    System.err.println(e.getMessage());
+                    StepConfig.printError("CIRCLE Construction Failed");
+                    StepConfig.printError(e.getMessage());
                     return null;
                 }
             }
@@ -384,7 +398,7 @@ public class AP242Decoder {
             }
 
             default -> {
-                System.err.println("CODE NOT FOUND" + value+ lineNumber);
+                StepConfig.printError("CODE NOT FOUND" + value+ lineNumber);
                 return null;
             }
         }
@@ -413,7 +427,7 @@ public class AP242Decoder {
             if (true) {
                 items.add((T) calculateDecoding(code,codeLineNumber));
             } else {
-                System.err.println("Get ITMENSSET");
+                StepConfig.printError("Get ITMENSSET");
                 throw new IllegalArgumentException("At get Items object Type " + calculateDecoding(code,codeLineNumber).getClass() + " does not have same Type like T" + obj.getClass());
             }
         }

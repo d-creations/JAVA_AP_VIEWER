@@ -1,25 +1,32 @@
 package ch.dcreations.apviewer.Step3DModel.StepShapes;
 
 import ch.dcreations.apviewer.Step3DModel.StepShapes.Point.CartesianPoint;
-import javafx.scene.control.TreeItem;
-import javafx.scene.shape.Shape3D;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 public class Axis2Placement3D extends StepShapes {
 
     protected CartesianPoint location;// Cartesian
     protected Direction axis ; // Direction
-    protected Direction direction ; // Direction
+    protected Direction firstDirection; // Direction
+
+    protected Direction secondDirection;
 
     public Axis2Placement3D(String name, CartesianPoint location, Direction axis, Direction direction,int lineNumber) {
         super(AP242Code.AXIS2_PLACEMENT_3D,name,lineNumber);
         this.location = location;
         this.axis = axis;
-        this.direction = direction;
+        this.firstDirection = direction;
+        if (axis != null && direction != null){
+            // Kreuzprodukt der zwei achsen gibt die Senkrechte
+            List<Double> secondDirectionList = new ArrayList<>();
+            secondDirectionList.add(axis.getDirectionRatios().get(1) * direction.getDirectionRatios().get(2) - axis.getDirectionRatios().get(2) * direction.getDirectionRatios().get(1)); // add X
+            secondDirectionList.add(axis.getDirectionRatios().get(2) * direction.getDirectionRatios().get(0) - axis.getDirectionRatios().get(0) * direction.getDirectionRatios().get(2)); // add Y
+            secondDirectionList.add(axis.getDirectionRatios().get(0) * direction.getDirectionRatios().get(1) - axis.getDirectionRatios().get(1) * direction.getDirectionRatios().get(0)); // add Z
+            secondDirection = new Direction("", secondDirectionList, 0);
+
+        }
     }
 
     public CartesianPoint getLocation() {
@@ -30,7 +37,11 @@ public class Axis2Placement3D extends StepShapes {
         return axis;
     }
 
-    public Direction getDirection() {
-        return direction;
+    public Direction getFirstDirection() {
+        return firstDirection;
+    }
+
+    public Direction getSecondDirection() {
+        return secondDirection;
     }
 }
