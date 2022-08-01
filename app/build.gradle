@@ -20,13 +20,26 @@ repositories {
     mavenCentral()
 }
 
+def urlFile = { url, name ->
+    File file = new File("$buildDir/download/${name}.jar")
+    file.parentFile.mkdirs()
+    if (!file.exists()) {
+        new URL(url).withInputStream { downloadStream ->
+            file.withOutputStream { fileOut ->
+                fileOut << downloadStream
+            }
+        }
+    }
+    files(file.absolutePath)
+}
+
 dependencies {
     implementation 'junit:junit:4.13.1'
     // Use JUnit Jupiter for testing.
     testImplementation 'org.junit.jupiter:junit-jupiter:5.7.2'
     // Mockito dependencies
     testImplementation 'org.mockito:mockito-core:4.3.+'
-
+    implementation files(urlFile('https://github.com/d-creations/3D-stepfile-decoder/raw/master/out/artifacts/3D_stepfile_Decoder_app_main/3D_stepfile_Decoder_app_main.jar', 'Step Decoder'))
 }
 
 application {
