@@ -1,6 +1,6 @@
 package ch.dcreations.apviewer.gui;
 
-import ch.dcreations.apviewer.Step3DModel.Step3DModel;
+import ch.rcreations.stepdecoder.Step3DModel;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

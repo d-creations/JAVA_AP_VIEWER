@@ -1,8 +1,6 @@
 package ch.dcreations.apviewer.fileHandler;
 
-import ch.dcreations.apviewer.Step3DModel.Step3DModel;
-import javafx.scene.shape.Mesh;
-import javafx.scene.shape.Shape;
+import ch.rcreations.stepdecoder.Step3DModel;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -11,8 +9,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
 
 public class FileHandler {
 

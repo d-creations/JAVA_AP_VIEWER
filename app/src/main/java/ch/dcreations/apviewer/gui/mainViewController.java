@@ -1,18 +1,14 @@
 package ch.dcreations.apviewer.gui;
 
-import ch.dcreations.apviewer.Step3DModel.Step3DModel;
-import ch.dcreations.apviewer.Step3DModel.StepShapes.StepShapes;
-import ch.dcreations.apviewer.Step3DModel.StepShapes.StepText;
+import ch.rcreations.stepdecoder.Step3DModel;
+import ch.rcreations.stepdecoder.StepShapes.StepShapes;
+import ch.rcreations.stepdecoder.StepShapes.StepText;
 import ch.dcreations.apviewer.config.LogConfiguration;
 import ch.dcreations.apviewer.fileHandler.FileHandler;
-import javafx.beans.property.SimpleListProperty;
-import javafx.beans.value.ObservableStringValue;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Point3D;
 import javafx.scene.*;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
@@ -20,14 +16,11 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.CullFace;
-import javafx.scene.shape.DrawMode;
 import javafx.scene.shape.MeshView;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
-import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
 
-import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
