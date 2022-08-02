@@ -223,7 +223,8 @@ public class mainViewController {
 
     @FXML
     void reCenter() {
-
+        rotateX.setAngle(0);
+        rotateY.setAngle(0);
     }
 
     @FXML
