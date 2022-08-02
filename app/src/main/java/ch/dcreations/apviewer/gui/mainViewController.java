@@ -18,6 +18,7 @@ import javafx.scene.shape.CullFace;
 import javafx.scene.shape.MeshView;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
+import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
 
 import java.io.*;
@@ -70,6 +71,9 @@ public class mainViewController {
     private Group subGroup;
     private Camera camera;
     private Group SelectedAPItem = new Group();
+    private Scale scale = new Scale();
+
+    Translate translate = new Translate();
 
     private TextArea textArea;
     @FXML
@@ -88,28 +92,25 @@ public class mainViewController {
             for (Step3DModel step3DModel1 : viewModel.step3DModels) {
                 for (MeshView shape : step3DModel1.getShapes2DMesh()) {
                     //shape.setDrawMode(DrawMode.FILL ); // Rotation not good wenn on
-                    double middleWidthOfScene = subScene.getWidth()/2;
-                    double middleHighOfScene = subScene.getHeight()/2;
                     shape.setCache(true);
+                    reCenter();
                     SelectedAPItem.setCache(true);
                     shape.setCacheHint(CacheHint.ROTATE);
                     SelectedAPItem.setCacheHint(CacheHint.ROTATE);
-                    SelectedAPItem.setTranslateX(middleWidthOfScene);
-                    SelectedAPItem.setTranslateY(middleHighOfScene);
-                    shape.setTranslateX(middleWidthOfScene);
-                    shape.setTranslateY(middleHighOfScene);
                     shape.setMaterial(new PhongMaterial(Color.CORNFLOWERBLUE));
                     shape.setCullFace(CullFace.BACK);
-                    shape.getTransforms().add(new Scale(2, 2));
-                    SelectedAPItem.getTransforms().add(new Scale(2, 2));
+                    shape.getTransforms().add(scale);
+                    SelectedAPItem.getTransforms().add(scale);
                     rotateX.setAxis(new Point3D(1, 0, 0));
                     rotateY.setAxis(new Point3D(0, 1, 0));
                     rotateY.setAngle(0);
                     rotateX.setAngle(0);
+                    shape.getTransforms().add(translate);
+                    SelectedAPItem.getTransforms().add(translate);
                     shape.getTransforms().add(rotateX);
+                    shape.getTransforms().add(rotateY);
                     SelectedAPItem.getTransforms().add(rotateX);
                     SelectedAPItem.getTransforms().add(rotateY);
-                    shape.getTransforms().add(rotateY);
                     subGroup.getChildren().add(shape);
                     subGroup.getChildren().add(SelectedAPItem);
                     TreeItem<StepShapes> treeItem = new TreeItem<>(new StepText("Project"));
@@ -225,12 +226,20 @@ public class mainViewController {
     void reCenter() {
         rotateX.setAngle(0);
         rotateY.setAngle(0);
+        double middleWidthOfScene = DrawingPane.getWidth()/4;
+        double middleHighOfScene = DrawingPane.getHeight()/4;
+        scale.setX(2);
+        scale.setY(2);
+        scale.setZ(2);
+        translate.setX(middleWidthOfScene);
+        translate.setY(middleHighOfScene);
     }
 
     @FXML
     private void mouseHandler(MouseEvent event) {
 
         if (turn) {
+
             double diff = getMouseX(event) - xPos;
             rotateY.setAngle((rotateY.getAngle() - diff));
             xPos = getMouseX(event);
@@ -249,7 +258,9 @@ public class mainViewController {
         xPos = getMouseX(event);
         yPos = getMouseY(event);
         turn=true;
+
     }
+
 
     private double getMouseX(MouseEvent event) {
         return event.getX();
