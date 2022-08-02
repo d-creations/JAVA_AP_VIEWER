@@ -1,14 +1,11 @@
 package ch.dcreations.apviewer.gui;
 
 import ch.rcreations.stepdecoder.Step3DModel;
-import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class ViewModel {
@@ -16,6 +13,7 @@ public class ViewModel {
     public final ObservableList<String> list = FXCollections.observableArrayList();
     List<Step3DModel> step3DModels = new ArrayList<>();
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(step3DModels);
+    private  String textfield = new String();
 
 
     public void addStepModel(Step3DModel step3DModel) {
@@ -48,5 +46,13 @@ public class ViewModel {
         step3DModels.clear();
         list.clear();
         update(step3DModels);
+    }
+
+    public String getText() {
+    return textfield;
+    }
+
+    public void setTextfield(String textfield) {
+        this.textfield = textfield;
     }
 }

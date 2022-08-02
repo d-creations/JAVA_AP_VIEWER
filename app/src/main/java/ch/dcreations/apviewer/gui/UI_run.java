@@ -27,19 +27,24 @@ public class UI_run extends Application {
             Scene scene = new Scene(rootPane,1000,600,true);
 
             Group subPane = new Group();
-            SubScene subScene = new SubScene(subPane, 200, 200, true, SceneAntialiasing.BALANCED);
+            SubScene subScene = new SubScene(subPane, 0, 0, true,SceneAntialiasing.DISABLED);
+            subScene.autosize();
+            ;
             subScene.setFill(Color.CADETBLUE);
 
             // fill in scene and stage setup
             primaryStage.setScene(scene);
+
+            primaryStage.setResizable(true);
+            //primaryStage.setMaximized(true);
+            primaryStage.setMinHeight(300);
+            primaryStage.setMinWidth(600);
             controller = loader.getController();
             controller.setStage(primaryStage,subPane);
-            controller.addSubScene(subScene);
             primaryStage.setOnCloseRequest(event -> controller.closeController());
             primaryStage.setTitle("Draw The Star");
-            primaryStage.setResizable(false);
-
             primaryStage.show();
+            controller.addSubScene(subScene);
         } catch (Exception e) {
             System.err.println("Error starting up UI " + e.getMessage() + e.toString());
         }

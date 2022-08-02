@@ -6,13 +6,12 @@ import ch.rcreations.stepdecoder.StepShapes.StepText;
 import ch.dcreations.apviewer.config.LogConfiguration;
 import ch.dcreations.apviewer.fileHandler.FileHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.geometry.Point3D;
 import javafx.scene.*;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.CullFace;
@@ -21,7 +20,7 @@ import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +33,6 @@ public class mainViewController {
     double xPos = 0;
     double yPos = 0;
     ViewModel viewModel;
-    MeshView meshView = new MeshView();
     Rotate rotateX = new Rotate();
     Rotate rotateY = new Rotate();
     FileHandler fileHandler;
@@ -46,6 +44,7 @@ public class mainViewController {
 
     @FXML
     private AnchorPane DrawingPane;
+
     @FXML
     private ListView<String> propertyViewList;
     @FXML
@@ -55,37 +54,58 @@ public class mainViewController {
     @FXML
     private AnchorPane PropertiesPane;
 
+    @FXML
+    private ToggleButton showFileButton;
+
+    @FXML
+    private ToggleButton show3DButton;
+
+    @FXML
+    private Button reloadButton;
+
+    @FXML
+    private Button recenterButton;
+
+
     private Group subGroup;
     private Camera camera;
     private Group SelectedAPItem = new Group();
 
+    private TextArea textArea;
     @FXML
     void initialize() {
         viewModel = new ViewModel();
         propertyViewList.setEditable(true);
         propertyViewList.setItems(viewModel.list);
         viewModel.setList(new ArrayList<>());
+        textArea = new TextArea();
+        show3DButton.setSelected(true);
+        showFileButton.setSelected(false);
+
         // Model on change Listener
         viewModel.addPropertyChangeListener(evt -> {
 
             for (Step3DModel step3DModel1 : viewModel.step3DModels) {
                 for (MeshView shape : step3DModel1.getShapes2DMesh()) {
-
                     //shape.setDrawMode(DrawMode.FILL ); // Rotation not good wenn on
+                    double middleWidthOfScene = subScene.getWidth()/2;
+                    double middleHighOfScene = subScene.getHeight()/2;
                     shape.setCache(true);
                     SelectedAPItem.setCache(true);
                     shape.setCacheHint(CacheHint.ROTATE);
                     SelectedAPItem.setCacheHint(CacheHint.ROTATE);
-                    SelectedAPItem.setTranslateX(150);
-                    SelectedAPItem.setTranslateY(150);
-                    shape.setTranslateX(150);
-                    shape.setTranslateY(150);
+                    SelectedAPItem.setTranslateX(middleWidthOfScene);
+                    SelectedAPItem.setTranslateY(middleHighOfScene);
+                    shape.setTranslateX(middleWidthOfScene);
+                    shape.setTranslateY(middleHighOfScene);
                     shape.setMaterial(new PhongMaterial(Color.CORNFLOWERBLUE));
                     shape.setCullFace(CullFace.BACK);
                     shape.getTransforms().add(new Scale(2, 2));
                     SelectedAPItem.getTransforms().add(new Scale(2, 2));
                     rotateX.setAxis(new Point3D(1, 0, 0));
                     rotateY.setAxis(new Point3D(0, 1, 0));
+                    rotateY.setAngle(0);
+                    rotateX.setAngle(0);
                     shape.getTransforms().add(rotateX);
                     SelectedAPItem.getTransforms().add(rotateX);
                     SelectedAPItem.getTransforms().add(rotateY);
@@ -133,6 +153,7 @@ public class mainViewController {
                     SelectedAPItem.getChildren().clear();
                 }
             }
+
             viewModel.setList(text);
         }
     }
@@ -151,8 +172,11 @@ public class mainViewController {
             fileHandler.getAFile();
             step3DModel.setName(fileHandler.getFileName());
         }
+        viewModel.setTextfield(fileHandler.readText());
         viewModel.addStepModel(step3DModel);
-
+        show3DButton.setSelected(true);
+        showFileButton.setSelected(false);
+        textArea.setText(viewModel.getText());
     }
     @FXML
     void closeFile() {
@@ -160,6 +184,45 @@ public class mainViewController {
         subGroup.getChildren().clear();
         viewModel.clearStepModel();
         treeView.setRoot(null);
+
+    }
+
+    @FXML
+    void showFile() {
+        //textArea.setPadding(new Insets(0.0));
+        DrawingPane.getChildren().clear();
+        DrawingPane.getChildren().add(textArea);
+        textArea.setPadding(new Insets(0));
+        textArea.isResizable();
+        textArea.setWrapText(true);
+        textArea.prefColumnCountProperty().bind((DrawingPane.widthProperty().divide(12)));
+        textArea.prefRowCountProperty().bind((DrawingPane.heightProperty().divide(19)));
+        DrawingPane.isResizable();
+        DrawingPane.autosize();
+        show3DButton.setSelected(false);
+    }
+    @FXML
+    void show3D() {
+        DrawingPane.getChildren().clear();
+        DrawingPane.getChildren().add(subScene);
+        showFileButton.setSelected(false);
+    }
+
+    @FXML
+    void reload() {
+        try {
+            viewModel.setTextfield(textArea.getText());
+            FileHandler fileToSave = new FileHandler(stage, step3DModel);
+            fileToSave.saveToNewFile(viewModel.getText());
+        }catch (Exception e){
+
+        }
+
+    }
+
+
+    @FXML
+    void reCenter() {
 
     }
 
@@ -203,13 +266,13 @@ public class mainViewController {
 
     public void addSubScene(SubScene subScene) {
         this.subScene = subScene;
-        subScene. setWidth(DrawingPane.getMaxWidth());
-        subScene.setHeight(DrawingPane.getMaxWidth());
-        DrawingPane.getChildren().add(subScene);
+        subScene.heightProperty().bind(DrawingPane.heightProperty());
+        subScene.widthProperty().bind(DrawingPane.widthProperty());
         final PerspectiveCamera camera = new PerspectiveCamera();
         camera.setNearClip(0.1);
         camera.setFarClip(10000.0);
         camera.setTranslateZ(-100);
         subScene.setCamera(camera);
+        DrawingPane.getChildren().add(subScene);
     }
 }
