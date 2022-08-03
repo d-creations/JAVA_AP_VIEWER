@@ -1,47 +1,47 @@
 package ch.dcreations.apviewer.gui;
 
+import ch.dcreations.apviewer.config.Print;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.*;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
-
+/**
+ * <p>
+ * <p>
+ *  Userinterface contains the Controller and the View Loader
+ * <p>
+ *
+ * @author Damian www.d-creations.org
+ * @version 1.0
+ * @since 2022-08-03
+ */
 public class UI_run extends Application {
 
     mainViewController controller;
     @Override
 
     public void start(Stage primaryStage) {
-        firstwindow(primaryStage);
+        firstWindow(primaryStage);
     }
 
-    private void firstwindow(Stage primaryStage) {
+    private void firstWindow(Stage primaryStage) {
         try {
             FXMLLoader loader = new FXMLLoader(this.getClass().getResource("mainView.fxml"));
-
             Pane rootPane = loader.load();
-            Scene scene = new Scene(rootPane,1000,600,true);
-
+            Scene scene = new Scene(rootPane, 1000, 600, true);
             Group subPane = new Group();
-            SubScene subScene = new SubScene(subPane, 200, 200, true, SceneAntialiasing.BALANCED);
-            subScene.setFill(Color.CADETBLUE);
-
-            // fill in scene and stage setup
             primaryStage.setScene(scene);
+            primaryStage.setResizable(true);
+            primaryStage.setMinHeight(300);
+            primaryStage.setMinWidth(600);
             controller = loader.getController();
             controller.setStage(primaryStage,subPane);
-            controller.addSubScene(subScene);
             primaryStage.setOnCloseRequest(event -> controller.closeController());
-            primaryStage.setTitle("Draw The Star");
-            primaryStage.setResizable(false);
-
+            primaryStage.setTitle("AP-Viewer");
             primaryStage.show();
         } catch (Exception e) {
-            System.err.println("Error starting up UI " + e.getMessage() + e.toString());
+            Print.printError("Error starting up UI " + e.getMessage() + e);
         }
     }
 }
