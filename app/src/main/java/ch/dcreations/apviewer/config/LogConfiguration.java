@@ -40,7 +40,7 @@ public class LogConfiguration {
                 configFileStream = Files.newInputStream(logConfigPath);
             } else {
                 // otherwise use minimal config from resources
-                logConfigFile="resources:/log.properties";
+                logConfigFile = "resources:/log.properties";
                 configFileStream = ClassLoader.getSystemClassLoader().getResourceAsStream("log.properties");
             }
             if (configFileStream != null) {
@@ -56,7 +56,7 @@ public class LogConfiguration {
 
 
     public static String getProperty(String name) {
-       return LogManager.getLogManager().getProperty(name);
+        return LogManager.getLogManager().getProperty(name);
     }
 
     public static void setLogLevel(Class clazz, Level level) {
