@@ -96,7 +96,17 @@ public class mainViewController {
 
         // Model on change Listener
         viewModel.addPropertyChangeListener(evt -> {
+            SelectedAPItem.getTransforms().add(scale);
+            rotateX.setAxis(new Point3D(1, 0, 0));
+            rotateY.setAxis(new Point3D(0, 1, 0));
+            rotateY.setAngle(0);
+            rotateX.setAngle(0);
             for (Step3DModel step3DModel1 : viewModel.step3DModels) {
+                TreeItem<StepShapes> treeItem = new TreeItem<>(new StepText("Project"));
+                treeView.setCache(true);
+                treeView.setEditable(true);
+                treeView.setRoot(treeItem);
+                treeItem.getChildren().add(step3DModel1.getStepShapes());
                 for (MeshView shape : step3DModel1.getShapes2DMesh()) {
                     shape.setDrawMode(DrawMode.FILL); // Rotation not good wenn on
                     shape.setCache(true);
@@ -107,11 +117,6 @@ public class mainViewController {
                     shape.setMaterial(new PhongMaterial(Color.CORNFLOWERBLUE));
                     shape.setCullFace(CullFace.BACK);
                     shape.getTransforms().add(scale);
-                    SelectedAPItem.getTransforms().add(scale);
-                    rotateX.setAxis(new Point3D(1, 0, 0));
-                    rotateY.setAxis(new Point3D(0, 1, 0));
-                    rotateY.setAngle(0);
-                    rotateX.setAngle(0);
                     shape.getTransforms().add(translate);
                     SelectedAPItem.getTransforms().add(translate);
                     shape.getTransforms().add(rotateX);
@@ -120,11 +125,6 @@ public class mainViewController {
                     SelectedAPItem.getTransforms().add(rotateY);
                     subGroup.getChildren().add(shape);
                     subGroup.getChildren().add(SelectedAPItem);
-                    TreeItem<StepShapes> treeItem = new TreeItem<>(new StepText("Project"));
-                    treeItem.getChildren().add(step3DModel1.getStepShapes());
-                    treeView.setCache(true);
-                    treeView.setEditable(true);
-                    treeView.setRoot(treeItem);
 
                 }
             }
